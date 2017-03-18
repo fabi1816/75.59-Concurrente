@@ -15,8 +15,6 @@ addons:
 
   sonarqube:
     organization: "fabi1816-github"
-    token:
-      secure: "ed6ea2697430f3a2179a598b005fb796002ad9ee"
       
 before_script:
   # Link gcc-6 and g++-6 to their standard commands
