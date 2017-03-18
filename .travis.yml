@@ -12,6 +12,11 @@ addons:
       - gcc-6
       - g++-6
       - cmake
+
+  sonarqube:
+    organization: "fabi1816-github"
+    token:
+      secure: "ed6ea2697430f3a2179a598b005fb796002ad9ee"
       
 before_script:
   # Link gcc-6 and g++-6 to their standard commands
@@ -28,4 +33,10 @@ script:
   - cd build
   - cmake ../src
   - pwd
-  - make
+  # Wrap the compiled app in sonar qube 
+  - build-wrapper-linux-x86-64 --out-dir bw-output make 
+  - sonar-scanner
+
+cache:
+  directories:
+    - '$HOME/.sonar/cache'
