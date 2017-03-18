@@ -1,3 +1,4 @@
+dist: trust
 language: cpp
 sudo: required
 
@@ -30,11 +31,10 @@ script:
   - mkdir build
   - cd build
   - cmake ../src
-  - pwd
   # Wrap the compiled app in sonar qube 
   - build-wrapper-linux-x86-64 --out-dir bw-output make 
-  - sonar-scanner
-
+  - sonar-scanner -X 
+  
 cache:
   directories:
     - '$HOME/.sonar/cache'
