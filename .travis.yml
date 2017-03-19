@@ -32,7 +32,7 @@ script:
   - cd build
   - cmake ../src
   # Wrap the compiled app in sonar qube 
-  - build-wrapper-linux-x86-64 --out-dir bw-output make 
+  - build-wrapper-linux-x86-64 --out-dir bw-output make clean all
   - sonar-scanner
   
 cache:
