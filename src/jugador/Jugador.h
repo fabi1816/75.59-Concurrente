@@ -1,10 +1,12 @@
-#ifndef _JUGADOR_H_
-#define _JUGADOR_H_
+#ifndef JUGADOR_H_
+#define JUGADOR_H_
 
 #include <vector>
 
 #include "Turno.h"
 
+
+namespace player {
 
 
 class Jugador {
@@ -13,13 +15,16 @@ class Jugador {
 
 		void Jugar();
 
-		virtual ~Jugador();
+		virtual ~Jugador() = default;
 
 	private:
 
 		Turno &m_turno;
 		std::vector<int> m_cartas;
 };
+
+
+}
 
 #endif
 

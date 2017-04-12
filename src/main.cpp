@@ -4,6 +4,8 @@
 #include "Jugador.h"
 #include "Turno.h"
 
+using namespace player;
+
 
 int main() {
 	std::cout << "Primera prueba de semaforos" << std::endl;
