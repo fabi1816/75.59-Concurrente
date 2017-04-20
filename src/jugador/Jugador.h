@@ -13,7 +13,7 @@ class Jugador {
 	public:
 		Jugador(std::vector<int> cartas, Turno &t);
 
-		void Jugar();
+		int Jugar();
 
 		virtual ~Jugador() = default;
 
