@@ -2,6 +2,7 @@
 #define JUGADOR_H_
 
 #include <vector>
+#include <iostream>
 
 #include "Turno.h"
 

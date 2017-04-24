@@ -1,34 +1,33 @@
 #ifndef TURNO_H
 #define TURNO_H
 
+#include <sys/types.h>
+#include <sys/ipc.h>
+#include <sys/sem.h>
+
 #include <string>
 #include <stdexcept>
 #include <system_error>
-
-#include <fcntl.h>
-#include <sys/stat.h>
-#include <semaphore.h>
 #include <cerrno>
+
 
 namespace player {
 
+	class Turno {
+		public:
+			Turno(int semID, int semNum);
 
-class Turno {
-	public:
-		Turno(std::string actual, std::string proximo);
+			void wait_p();
+			void signal_v();
 
-		void esperar();
-		void proximo();
+			virtual ~Turno();
 
-		virtual ~Turno();
+		private:
+			int m_semaphoreID;
+			int m_semaphoreNum;
 
-	private:
-		std::string m_nomberActualSemaforo;
-		std::string m_nomberProximoSemaforo;
-		
-		sem_t* m_actualSemaforo;
-		sem_t* m_proximoSemaforo;
-};
+			void checkErrors(int result, std::string msg) const;
+	};
 
 }
 

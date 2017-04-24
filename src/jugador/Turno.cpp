@@ -1,40 +1,43 @@
 #include "Turno.h"
 
+
 namespace player {
 
 
-Turno::Turno(std::string actual, std::string proximo) 
-	: m_nomberActualSemaforo(actual), m_nomberProximoSemaforo(proximo) 
-{
-	this->m_actualSemaforo = sem_open(m_nomberActualSemaforo.c_str(), O_CREAT, 0666, 0);
-	if (this->m_actualSemaforo == SEM_FAILED) {
-		throw std::system_error(errno, std::generic_category(), "Falló la creación de un semaforo");
+	Turno::Turno(int semID, int semNum) : m_semaphoreID(semID), m_semaphoreNum(semNum) { }
+
+
+	void Turno::wait_p() {
+		sembuf sops = { };
+		sops.sem_num = this->m_semaphoreNum;
+		sops.sem_op = -1;	// Wait
+
+		int res = semop(this->m_semaphoreID, &sops, 1);
+		checkErrors(res, "Falló la espera del semaforo");
 	}
 
-	this->m_proximoSemaforo = sem_open(m_nomberProximoSemaforo.c_str(), O_CREAT, 0666, 0);
-	if (this->m_proximoSemaforo == SEM_FAILED) {
-		throw std::system_error(errno, std::generic_category(), "Falló la creación de un semaforo");
+
+	void Turno::signal_v() {
+		sembuf sops = { };
+		sops.sem_num = this->m_semaphoreNum;
+		sops.sem_op = 1;	// Signal
+
+		int res = semop(this->m_semaphoreID, &sops, 1);
+		checkErrors(res, "Falló la señal del semaforo");
 	}
-}
+
+	
+	void Turno::checkErrors(int result, std::string msg) const {
+		if (result == -1) {
+			throw std::system_error(errno, std::generic_category(), msg);
+		}
+	}
 
 
-void Turno::esperar() {
-	sem_wait(this->m_actualSemaforo);
-}
-
-
-void Turno::proximo() {
-	sem_post(this->m_proximoSemaforo);
-}
-
-
-Turno::~Turno() {
-	// Posiblemente alguien mas deberia cerrar los semaforos...
-	sem_close(this->m_actualSemaforo);
-	sem_close(this->m_proximoSemaforo);
-	// Falta hacer unlink
-}
-
+	Turno::~Turno() {
+		int res = semctl(this->m_semaphoreID, this->m_semaphoreNum, IPC_RMID);
+		checkErrors(res, "Falló la eliminación del semaforo");
+	}
 
 }
 
