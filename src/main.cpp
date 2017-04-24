@@ -57,7 +57,7 @@ int main() {
 
 		return 0;
 
-	} catch (const std::system_error e) {
+	} catch (const std::system_error &e) {
 		std::cout << "** Error: " << e.code() << " -> " << e.what() << std::endl;
 		return -1;
 	}
