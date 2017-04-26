@@ -33,14 +33,5 @@ namespace player {
 		}
 	}
 
-
-	void Turno::destroy() {
-		int res = semctl(this->m_semaphoreID, this->m_semaphoreNum, IPC_RMID);
-		checkErrors(res, "Falló la destruccion del semaforo");
-	}
-
-
-	Turno::~Turno() { }
-
 }
 

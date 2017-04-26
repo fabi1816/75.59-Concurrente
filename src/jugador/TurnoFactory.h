@@ -19,7 +19,8 @@ namespace player {
 
 	class TurnoFactory {
 		public:
-			static std::vector< std::unique_ptr<Turno> > buildTurnos(int cant);
+			static std::vector< std::shared_ptr<Turno> > buildTurnos(int cant);
+			static void destroyTurnos(std::vector< std::shared_ptr<Turno> > turnos);
 
 		private:
 			TurnoFactory() { }

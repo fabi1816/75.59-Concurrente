@@ -19,9 +19,10 @@ namespace player {
 
 			void wait_p();
 			void signal_v();
-			void destroy();
 
-			virtual ~Turno();
+			int getSemId() const { return this->m_semaphoreID; }
+
+			virtual ~Turno() = default;
 
 		private:
 			int m_semaphoreID;

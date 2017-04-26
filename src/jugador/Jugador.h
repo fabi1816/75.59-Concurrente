@@ -2,6 +2,7 @@
 #define JUGADOR_H_
 
 #include <vector>
+#include <memory>
 #include <iostream>
 
 #include "Turno.h"
@@ -10,20 +11,22 @@
 namespace player {
 
 
-class Jugador {
-	public:
-		Jugador(std::vector<int> cartas, Turno &t);
+	class Jugador {
+		public:
+			Jugador(int id, std::vector<int> cartas, std::shared_ptr<Turno> t, std::shared_ptr<Turno> prox);
 
-		int Jugar();
+			int jugar();
 
-		virtual ~Jugador() = default;
+			virtual ~Jugador() = default;
 
-	private:
+		private:
 
-		Turno &m_turno;
-		std::vector<int> m_cartas;
-};
+			int m_id;
+			std::vector<int> m_cartas;
 
+			std::shared_ptr<Turno> m_turno;
+			std::shared_ptr<Turno> m_turnoProximoJugador;
+	};
 
 }
 

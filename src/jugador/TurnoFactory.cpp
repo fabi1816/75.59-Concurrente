@@ -3,7 +3,7 @@
 
 namespace player {
 
-	std::vector< std::unique_ptr<Turno> > TurnoFactory::buildTurnos(int cant) {
+	std::vector< std::shared_ptr<Turno> > TurnoFactory::buildTurnos(int cant) {
 		// Crea la key para los semaforos
 		key_t k = ftok("/bin/ls", 19);
 		checkError(k, "Falló la creación de la key");
@@ -26,12 +26,23 @@ namespace player {
 		}
 
 		// Crea los turnos 
-		std::vector< std::unique_ptr<Turno> > v;
+		std::vector< std::shared_ptr<Turno> > v;
 		for (int i = 0; i < cant; ++i) {
-			v.push_back(std::make_unique<Turno>(semID, i));
+			v.push_back(std::make_shared<Turno>(semID, i));
 		}
 
 		return v;
+	}
+
+
+	void TurnoFactory::destroyTurnos(std::vector< std::shared_ptr<Turno> > turnos) {
+		if (turnos.empty()) {
+			return;
+		}
+
+		int semID = turnos.front()->getSemId();
+		int res = semctl(semID, 0, IPC_RMID);
+		checkError(res, "Falló la destruccion de los semaforos en el set");
 	}
 
 
