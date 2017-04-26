@@ -4,6 +4,7 @@
 #include <sys/sem.h>
 #include <sys/wait.h>
 
+#include <memory>
 #include <vector>
 #include <string>
 #include <iostream>
@@ -25,7 +26,7 @@ int main() {
 		std::vector<int> cartasJ1 = { 1, 2 };
 
 		// Crear semaforo
-		std::vector<player::Turno> turnos = player::TurnoFactory::buildTurnos(1);
+		std::vector< std::unique_ptr<player::Turno> > turnos = player::TurnoFactory::buildTurnos(1);
 		std::cout << "Semaforo listo" << std::endl;
 
 		// Se crea el jugador de prueba en su propio proceso
@@ -34,7 +35,7 @@ int main() {
 			std::cout << "--> Se crea al jugagor" << std::endl;
 			std::cout << "--> Espero..." << std::endl;
 
-			turnos[0].wait_p();
+			turnos[0]->wait_p();
 			
 			std::cout << "--> Juego una carta!" << std::endl;
 			std::cout << "--> Señalo al siguiente" << std::endl;
@@ -46,12 +47,15 @@ int main() {
 
 		// Señala al primer jugador que comienze el juego
 		std::cout << "Empieza el juego" << std::endl;
-		turnos[0].signal_v();
+		turnos[0]->signal_v();
 
 		// Se espera por el jugador
 		std::cout << "Espero por un jugador" << std::endl;
 		int stat = 0;
 		wait(&stat);
+
+		std::cout << "Destruyo el semaforo" << std::endl;
+		turnos[0]->destroy();
 
 		std::cout << "Fin del juego" << std::endl;
 

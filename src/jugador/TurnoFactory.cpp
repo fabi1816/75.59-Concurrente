@@ -3,7 +3,7 @@
 
 namespace player {
 
-	std::vector<Turno> TurnoFactory::buildTurnos(int cant) {
+	std::vector< std::unique_ptr<Turno> > TurnoFactory::buildTurnos(int cant) {
 		// Crea la key para los semaforos
 		key_t k = ftok("/bin/ls", 19);
 		checkError(k, "Falló la creación de la key");
@@ -26,10 +26,9 @@ namespace player {
 		}
 
 		// Crea los turnos 
-		std::vector<Turno> v;
+		std::vector< std::unique_ptr<Turno> > v;
 		for (int i = 0; i < cant; ++i) {
-			Turno t(semID, i);
-			v.push_back(t);
+			v.push_back(std::make_unique<Turno>(semID, i));
 		}
 
 		return v;

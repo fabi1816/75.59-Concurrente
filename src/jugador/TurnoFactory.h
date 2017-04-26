@@ -5,6 +5,7 @@
 #include <sys/ipc.h>
 #include <sys/sem.h>
 
+#include <memory>
 #include <vector>
 #include <string>
 #include <stdexcept>
@@ -18,7 +19,7 @@ namespace player {
 
 	class TurnoFactory {
 		public:
-			static std::vector<Turno> buildTurnos(int cant);
+			static std::vector< std::unique_ptr<Turno> > buildTurnos(int cant);
 
 		private:
 			TurnoFactory() { }

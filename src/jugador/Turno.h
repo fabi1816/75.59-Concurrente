@@ -19,6 +19,7 @@ namespace player {
 
 			void wait_p();
 			void signal_v();
+			void destroy();
 
 			virtual ~Turno();
 
