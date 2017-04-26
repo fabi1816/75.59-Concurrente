@@ -23,7 +23,7 @@ namespace player {
 			static void destroyTurnos(std::vector< std::shared_ptr<Turno> > turnos);
 
 		private:
-			TurnoFactory() { }
+			TurnoFactory() = default;
 			static void checkError(int res, std::string txt);
 	};
 }
