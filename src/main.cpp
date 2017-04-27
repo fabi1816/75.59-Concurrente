@@ -11,6 +11,7 @@
 #include <cerrno>
 
 #include "Jugador.h"
+#include "Dealer.h"
 #include "Turno.h"
 #include "TurnoFactory.h"
 
@@ -18,23 +19,22 @@
 
 int main() {
 	try {
-		std::cout << "Prueba de juego - mkIIX" << std::endl;
+		std::cout << "Prueba de juego - mkIX" << std::endl;
 
 		int cantJugadores = 4;
 		std::cout << "Jugadores = " << cantJugadores << std::endl;
 
-		// Autogenerar las cartas de los jugadores
+		// Repartir las cartas a los jugadores
+		game::Dealer repartidor(cantJugadores);
 		std::vector< std::stack<int> > cartas;
 
 		for (int i = 0; i < cantJugadores; ++i) {
-			std::stack<int> c;
-			c.push((i+1) *2);
-			c.push((i+1) *3);
+			std::stack<int> c = repartidor.getPila(i);
 
 			cartas.push_back(c);
 		}
 
-		// Crear semaforos
+		// Crear turnos para los jugadores
 		typedef std::shared_ptr<game::Turno> autoTurno;
 		std::vector<autoTurno> turnos = game::TurnoFactory::buildTurnos(cantJugadores);
 
