@@ -3,6 +3,7 @@
 
 #include <memory>
 #include <vector>
+#include <stack>
 #include <string>
 #include <iostream>
 #include <stdexcept>
@@ -17,36 +18,47 @@
 
 int main() {
 	try {
-		std::cout << "Prueba de juego - mkVIII" << std::endl;
+		std::cout << "Prueba de juego - mkIIX" << std::endl;
 
-		// Las cartas del jugador
-		std::vector<int> cartasJ1 = { 1, 2 };
+		unsigned int cantJugadores = 4;
+		std::cout << "Jugadores = " << cantJugadores << std::endl;
+
+		// TODO: Autogenerar las cartas de los jugadores
+		std::stack<int> cartasJ0 = { 1, 2 };
+		std::stack<int> cartasJ1 = { 3, 4 };
+		std::stack<int> cartasJ2 = { 5, 6 };
+		std::stack<int> cartasJ3 = { 7, 8 };
+
+		std::vector< std::stack<int> > cartas = { 1, 2 };
 
 		// Crear semaforos
-		std::vector< std::shared_ptr<player::Turno> > turnos = player::TurnoFactory::buildTurnos(2);
-		std::cout << "Semaforos listos" << std::endl;
+		typedef std::shared_ptr<player::Turno> autoTurno;
+		std::vector<autoTurno> turnos = player::TurnoFactory::buildTurnos(cantJugadores);
 
-		// Se crea el jugador de prueba en su propio proceso
-		pid_t pid = fork();
-		if (pid == 0) {
-			player::Jugador jugador1(0, cartasJ1, turnos[0], turnos[1]);
+		// Se crean los jugadores en sus propios procesos
+		for (int i = 0; i < cantJugadores; ++i) {
+			pid_t pid = fork();
+			if (pid == 0) {
+				int prox = (i+1) % cantJugadores;
 
-			return jugador1.jugar();
+				player::Jugador j(i, cartasJ1, turnos[i], turnos[prox]);
+
+				return j.jugar();
+			}
 		}
-
-		std::cout << "Espero a que empieze el juego" << std::endl;
-		sleep(3);
 
 		// Señala al primer jugador que comienze el juego
 		std::cout << "Empieza el juego" << std::endl;
 		turnos[0]->signal_v();
 
-		// Se espera por el jugador
+		// Se esperan que terminen todos los jugadores
 		std::cout << "Espero por los jugadores" << std::endl;
-		int stat = 0;
-		wait(&stat);
+		for (int i = 0; i < cantJugadores; ++i) {
+			int stat = 0;
+			wait(&stat);
+		}
 
-		std::cout << "Destruyo los semaforos" << std::endl;
+		// Destruir semaforos
 		player::TurnoFactory::destroyTurnos(turnos);
 
 		std::cout << "Fin del juego" << std::endl;

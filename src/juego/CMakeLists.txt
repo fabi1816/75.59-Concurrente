@@ -8,5 +8,5 @@ set ( SRCS
 
 
 #Compila la libreria
-add_library ( jugador ${SRCS} )
+add_library ( juego ${SRCS} )
 

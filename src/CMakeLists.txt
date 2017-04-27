@@ -1,5 +1,5 @@
 cmake_minimum_required ( VERSION 2.6 )
-project ( atrevidoV1 )
+project ( atrevidoV2 )
 
 set ( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -Wall -Wpedantic -Wextra -pthread" )
 set ( CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS} -O3 -DNDEBUG" )
@@ -12,11 +12,11 @@ if ( NOT CMAKE_BUILD_TYPE )
 endif ()
 
 # Permite que el compilador vea los include
-include_directories ( ${PROJECT_SOURCE_DIR}/jugador )
+include_directories ( ${PROJECT_SOURCE_DIR}/juego )
 
 # Donde estan las librerias
-add_subdirectory ( jugador )
+add_subdirectory ( juego )
 
 add_executable ( ${PROJECT_NAME} main.cpp )
-target_link_libraries ( ${PROJECT_NAME} jugador )
+target_link_libraries ( ${PROJECT_NAME} juego )
 
