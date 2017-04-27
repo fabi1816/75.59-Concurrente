@@ -1,7 +1,7 @@
 #include "Turno.h"
 
 
-namespace player {
+namespace game {
 
 
 	Turno::Turno(int semID, int semNum) : m_semaphoreID(semID), m_semaphoreNum(semNum) { }

@@ -2,7 +2,7 @@
 
 
 
-namespace player {
+namespace game {
 
 
 	Jugador::Jugador(int id, std::vector<int> cartas, std::shared_ptr<Turno> t, std::shared_ptr<Turno> prox)

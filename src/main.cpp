@@ -33,7 +33,7 @@ int main() {
 
 		// Crear semaforos
 		typedef std::shared_ptr<player::Turno> autoTurno;
-		std::vector<autoTurno> turnos = player::TurnoFactory::buildTurnos(cantJugadores);
+		std::vector<autoTurno> turnos = game::TurnoFactory::buildTurnos(cantJugadores);
 
 		// Se crean los jugadores en sus propios procesos
 		for (int i = 0; i < cantJugadores; ++i) {
@@ -41,7 +41,7 @@ int main() {
 			if (pid == 0) {
 				int prox = (i+1) % cantJugadores;
 
-				player::Jugador j(i, cartasJ1, turnos[i], turnos[prox]);
+				game::Jugador j(i, cartasJ1, turnos[i], turnos[prox]);
 
 				return j.jugar();
 			}
@@ -59,7 +59,7 @@ int main() {
 		}
 
 		// Destruir semaforos
-		player::TurnoFactory::destroyTurnos(turnos);
+		game::TurnoFactory::destroyTurnos(turnos);
 
 		std::cout << "Fin del juego" << std::endl;
 

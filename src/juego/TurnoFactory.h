@@ -15,7 +15,7 @@
 #include "Turno.h"
 
 
-namespace player {
+namespace game {
 
 	class TurnoFactory {
 		public:

@@ -1,7 +1,7 @@
 #include "TurnoFactory.h"
 
 
-namespace player {
+namespace game {
 
 	std::vector< std::shared_ptr<Turno> > TurnoFactory::buildTurnos(int cant) {
 		// Crea la key para los semaforos

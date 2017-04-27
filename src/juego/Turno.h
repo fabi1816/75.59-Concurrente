@@ -11,7 +11,7 @@
 #include <cerrno>
 
 
-namespace player {
+namespace game {
 
 	class Turno {
 		public:
