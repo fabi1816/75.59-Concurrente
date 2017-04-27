@@ -1,7 +1,7 @@
 #ifndef JUGADOR_H_
 #define JUGADOR_H_
 
-#include <vector>
+#include <stack>
 #include <memory>
 #include <iostream>
 
@@ -13,7 +13,7 @@ namespace game {
 
 	class Jugador {
 		public:
-			Jugador(int id, std::vector<int> cartas, std::shared_ptr<Turno> t, std::shared_ptr<Turno> prox);
+			Jugador(int id, std::stack<int> cartas, std::shared_ptr<Turno> t, std::shared_ptr<Turno> prox);
 
 			int jugar();
 
@@ -22,7 +22,7 @@ namespace game {
 		private:
 
 			int m_id;
-			std::vector<int> m_cartas;
+			std::stack<int> m_cartas;
 
 			std::shared_ptr<Turno> m_turno;
 			std::shared_ptr<Turno> m_turnoProximoJugador;

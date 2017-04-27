@@ -20,19 +20,22 @@ int main() {
 	try {
 		std::cout << "Prueba de juego - mkIIX" << std::endl;
 
-		unsigned int cantJugadores = 4;
+		int cantJugadores = 4;
 		std::cout << "Jugadores = " << cantJugadores << std::endl;
 
-		// TODO: Autogenerar las cartas de los jugadores
-		std::stack<int> cartasJ0 = { 1, 2 };
-		std::stack<int> cartasJ1 = { 3, 4 };
-		std::stack<int> cartasJ2 = { 5, 6 };
-		std::stack<int> cartasJ3 = { 7, 8 };
+		// Autogenerar las cartas de los jugadores
+		std::vector< std::stack<int> > cartas;
 
-		std::vector< std::stack<int> > cartas = { 1, 2 };
+		for (int i = 0; i < cantJugadores; ++i) {
+			std::stack<int> c;
+			c.push((i+1) *2);
+			c.push((i+1) *3);
+
+			cartas.push_back(c);
+		}
 
 		// Crear semaforos
-		typedef std::shared_ptr<player::Turno> autoTurno;
+		typedef std::shared_ptr<game::Turno> autoTurno;
 		std::vector<autoTurno> turnos = game::TurnoFactory::buildTurnos(cantJugadores);
 
 		// Se crean los jugadores en sus propios procesos
@@ -41,7 +44,7 @@ int main() {
 			if (pid == 0) {
 				int prox = (i+1) % cantJugadores;
 
-				game::Jugador j(i, cartasJ1, turnos[i], turnos[prox]);
+				game::Jugador j(i, cartas[i], turnos[i], turnos[prox]);
 
 				return j.jugar();
 			}
