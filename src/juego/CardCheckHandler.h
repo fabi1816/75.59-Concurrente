@@ -1,5 +1,5 @@
-#ifndef _JHANDLER_H
-#define _JHANDLER_H
+#ifndef _CARDCHECK_HANDLER_H
+#define _CARDCHECK_HANDLER_H
 
 #include <iostream>
 
@@ -8,7 +8,7 @@
 
 namespace game {
 
-	class jHandler : public utils::EventHandler {
+	class CardCheckHandler : public utils::EventHandler {
 		public:
 			virtual int handleSignal(int signum) {
 				std::cout << "Señal recibida: " << signum << std::endl;
@@ -16,7 +16,7 @@ namespace game {
 			}
 
 
-			virtual ~jHandler() {
+			virtual ~CardCheckHandler() {
 				// nothing
 			}
 

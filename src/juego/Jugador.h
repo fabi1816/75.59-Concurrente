@@ -7,7 +7,7 @@
 
 #include "Turno.h"
 #include "SignalHandler.h"
-#include "jHandler.h"
+#include "CardCheckHandler.h"
 
 
 namespace game {
@@ -29,7 +29,7 @@ namespace game {
 			std::shared_ptr<Turno> m_turno;
 			std::shared_ptr<Turno> m_turnoProximoJugador;
 
-			jHandler m_jsig;
+			CardCheckHandler m_cardHandler;
 	};
 
 }

@@ -17,7 +17,7 @@ namespace game {
 		public:
 			Turno(int semID, int semNum);
 
-			void wait_p();
+			bool wait_p();
 			void signal_v();
 
 			int getSemId() const { return this->m_semaphoreID; }
