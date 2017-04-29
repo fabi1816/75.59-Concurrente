@@ -6,6 +6,8 @@
 #include <iostream>
 
 #include "Turno.h"
+#include "SignalHandler.h"
+#include "jHandler.h"
 
 
 namespace game {
@@ -17,7 +19,7 @@ namespace game {
 
 			int jugar();
 
-			virtual ~Jugador() = default;
+			virtual ~Jugador();
 
 		private:
 
@@ -26,6 +28,8 @@ namespace game {
 
 			std::shared_ptr<Turno> m_turno;
 			std::shared_ptr<Turno> m_turnoProximoJugador;
+
+			jHandler m_jsig;
 	};
 
 }

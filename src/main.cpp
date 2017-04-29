@@ -1,4 +1,5 @@
 #include <unistd.h>
+#include <signal.h>
 #include <sys/wait.h>
 
 #include <memory>
@@ -21,7 +22,7 @@ int main() {
 	try {
 		std::cout << "Prueba de juego - mkIX" << std::endl;
 
-		int cantJugadores = 4;
+		int cantJugadores = 2;
 		std::cout << "Jugadores = " << cantJugadores << std::endl;
 
 		// Repartir las cartas a los jugadores
@@ -38,6 +39,7 @@ int main() {
 		typedef std::shared_ptr<game::Turno> autoTurno;
 		std::vector<autoTurno> turnos = game::TurnoFactory::buildTurnos(cantJugadores);
 
+		std::vector<pid_t> pids;
 		// Se crean los jugadores en sus propios procesos
 		for (int i = 0; i < cantJugadores; ++i) {
 			pid_t pid = fork();
@@ -48,11 +50,22 @@ int main() {
 
 				return j.jugar();
 			}
+
+			pids.push_back(pid);
 		}
 
 		// Señala al primer jugador que comienze el juego
-		std::cout << "Empieza el juego" << std::endl;
-		turnos[0]->signal_v();
+		//std::cout << "Empieza el juego" << std::endl;
+		//turnos[0]->signal_v();
+		
+		std::cout << "Señalo a los jugadores" << std::endl;
+		sleep(3);
+		for (int i = 0; i < cantJugadores; ++i) {
+			int res = kill(pids[i], SIGINT);
+			if (res == -1) {
+				throw std::system_error(errno, std::generic_category(), "Error de la señal");
+			}
+		}
 
 		// Se esperan que terminen todos los jugadores
 		std::cout << "Espero por los jugadores" << std::endl;
@@ -69,7 +82,7 @@ int main() {
 		return 0;
 
 	} catch (const std::system_error &e) {
-		std::cout << "** Error: " << e.code() << " -> " << e.what() << std::endl;
+		std::cout << "\n** Error: " << e.code() << " -> " << e.what() << std::endl;
 		return -1;
 	}
 }

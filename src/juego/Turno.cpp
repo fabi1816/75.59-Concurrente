@@ -28,7 +28,7 @@ namespace game {
 
 	
 	void Turno::checkErrors(int result, std::string msg) const {
-		if (result == -1) {
+		if (result == -1 && errno != EINTR) {
 			throw std::system_error(errno, std::generic_category(), msg);
 		}
 	}
