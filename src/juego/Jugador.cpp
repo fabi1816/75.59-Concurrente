@@ -18,14 +18,14 @@ namespace game {
 
 			bool esMiTurno = this->m_turno->wait_p();
 			if (esMiTurno) {
-				msg("Juego una carta: " + this->m_cartas.top());
+				std::cout << "\t" << this->m_id << " ==> Juego una carta: " << this->m_cartas.top() << std::endl;
 				this->m_cartas.pop();
 
 				// Aviso a todos que hay una carta nueva en la mesa
 				utils::SignalHandler::getInstance()->sendSignal(0, CardCheckHandler::SIG_CARTA_JUGADA);
 			}
 
-			msg("Alguien jugó una carta: " + this->m_cardHandler.cartaJugada);
+			std::cout << "\t" << this->m_id << " ==> Alguien jugó una carta: " << this->m_cardHandler.cartaJugada << std::endl;
 			saludar(this->m_cardHandler.cartaJugada, this->m_cartaPrev);
 			this->m_cartaPrev = this->m_cardHandler.cartaJugada;
 

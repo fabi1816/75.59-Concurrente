@@ -6,7 +6,8 @@ namespace game {
 
 	std::vector< std::stack<int> > Dealer::getPilas(int cantPilas) {
 		// Redondea hacia abajo, lo que significa que quedan cartas en el mazo
-		int cantCartas = 48 / cantPilas;
+		int totalCartas = 4;
+		int cantCartas = totalCartas / cantPilas;
 
 		std::vector< std::stack<int> > pilas;
 		for (int i = 0; i < cantPilas; ++i) {

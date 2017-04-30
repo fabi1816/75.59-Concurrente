@@ -14,10 +14,26 @@
 #include "TurnoFactory.h"
 
 
+#include "EventHandler.h"
+
+
+class handler : public utils::EventHandler {
+	public:
+		virtual int handleSignal(int signum) {
+			std::cout << "El main recivió una señal: " << signum << std::endl;
+			return 0;
+		}
+
+		virtual ~handler() = default;
+};
+
 
 int main() {
 	try {
-		std::cout << "Prueba de juego - mkXII" << std::endl;
+		std::cout << "Prueba de juego - mkXV" << std::endl;
+
+		handler pepe;
+		utils::SignalHandler::getInstance()->registrarHandler(SIGUSR1, &pepe);
 
 		int cantJugadores = 2;
 		std::cout << "Jugadores = " << cantJugadores << std::endl;
@@ -53,11 +69,21 @@ int main() {
 		std::cout << "Espero por los jugadores" << std::endl;
 		for (int i = 0; i < cantJugadores; ++i) {
 			int stat = 0;
-			wait(&stat);
+			int res = wait(&stat);
+			if (res == -1 && errno != EINTR) {
+				throw std::system_error(errno, std::generic_category(), "Wait con error");
+
+			} else if(res == -1 && errno == EINTR) {
+				// TODO: Bloquear las señales en el main o ver alguna forma de
+				// pasar los pids de todos los jugadores a todos los jugadores
+				std::cout << "El Main fue interrumpido por una señal" << std::endl;
+				--i;
+			}
 		}
 
 		// Destruir semaforos
 		game::TurnoFactory::destroyTurnos(turnos);
+		utils::SignalHandler::destruir();
 
 		std::cout << "Fin del juego" << std::endl;
 
