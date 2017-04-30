@@ -1,5 +1,4 @@
 #include <unistd.h>
-#include <signal.h>
 #include <sys/wait.h>
 
 #include <memory>
@@ -7,9 +6,7 @@
 #include <stack>
 #include <string>
 #include <iostream>
-#include <stdexcept>
 #include <system_error>
-#include <cerrno>
 
 #include "Jugador.h"
 #include "Dealer.h"
@@ -20,7 +17,7 @@
 
 int main() {
 	try {
-		std::cout << "Prueba de juego - mkIX" << std::endl;
+		std::cout << "Prueba de juego - mkXII" << std::endl;
 
 		int cantJugadores = 2;
 		std::cout << "Jugadores = " << cantJugadores << std::endl;
@@ -52,15 +49,6 @@ int main() {
 		std::cout << "Empieza el juego" << std::endl;
 		turnos[0]->signal_v();
 		
-		std::cout << "Señalo a los jugadores" << std::endl;
-		sleep(3);
-		for (int i = 0; i < cantJugadores; ++i) {
-			int res = kill(pids[i], SIGINT);
-			if (res == -1) {
-				throw std::system_error(errno, std::generic_category(), "Error de la señal");
-			}
-		}
-
 		// Se esperan que terminen todos los jugadores
 		std::cout << "Espero por los jugadores" << std::endl;
 		for (int i = 0; i < cantJugadores; ++i) {

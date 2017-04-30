@@ -4,7 +4,9 @@
 #include <signal.h>
 #include <stdio.h>
 
-#include <memory.h>
+#include <cerrno>
+#include <stdexcept>
+#include <system_error>
 
 #include "EventHandler.h"
 
@@ -23,8 +25,10 @@ namespace utils {
 			static SignalHandler* getInstance();
 			static void destruir();
 
-			EventHandler* registrarHandler(int signum,EventHandler* eh);
+			EventHandler* registrarHandler(int signum, EventHandler* eh);
 			int removerHandler(int signum);
+
+			int sendSignal(pid_t pid, int signalNum);
 
 	};
 }

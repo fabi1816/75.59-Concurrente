@@ -24,12 +24,11 @@ namespace utils {
 	}
 
 
-	EventHandler* SignalHandler::registrarHandler(int signum,EventHandler* eh) {
+	EventHandler* SignalHandler::registrarHandler(int signum, EventHandler* eh) {
 		EventHandler* old_eh = SignalHandler::signal_handlers[signum];
 		SignalHandler::signal_handlers[signum] = eh;
 
-		struct sigaction sa;
-		memset(&sa, 0, sizeof(sa));
+		struct sigaction sa = { };
 		sa.sa_handler = &SignalHandler::dispatcher;
 
 		sigemptyset(&sa.sa_mask);	// inicializa la mascara de seniales a bloquear durante la ejecucion del handler como vacio
@@ -51,6 +50,17 @@ namespace utils {
 		SignalHandler::signal_handlers[signum] = nullptr;
 		return 0;
 	}
+
+
+	int SignalHandler::sendSignal(pid_t pid, int signalNum) {
+		int res = kill(pid, signalNum);
+		if (res == -1) {
+			throw std::system_error(errno, std::generic_category(), "Error al enviar una señal");
+		}
+
+		return res;
+	}
+
 }
 
 

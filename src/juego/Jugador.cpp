@@ -21,21 +21,26 @@ namespace game {
 				msg("Juego una carta: " + this->m_cartas.top());
 				this->m_cartas.pop();
 
+				// Aviso a todos que hay una carta nueva en la mesa
+				utils::SignalHandler::getInstance()->sendSignal(0, CardCheckHandler::SIG_CARTA_JUGADA);
+			}
+
+			msg("Alguien jugó una carta: " + this->m_cardHandler.cartaJugada);
+			saludar(this->m_cardHandler.cartaJugada, this->m_cartaPrev);
+			this->m_cartaPrev = this->m_cardHandler.cartaJugada;
+
+			// TODO: Escuchar los mensajes de todos los jugadores
+			// Podria ser un semaforo que vaya disminuyendo por cada mensaje recibido 
+			// hasta llegar a cero y que siga la ejecucion cuando sea cero.
+
+			if (esMiTurno) {
 				msg("Pasé el turno al siguiente jugador");
 				this->m_turnoProximoJugador->signal_v();
-
-			} else {
-				msg("Alguien jugó una carta: " + this->m_cardHandler.cartaJugada);
-				saludar(this->m_cardHandler.cartaJugada, this->m_cartaPrev);
-				this->m_cartaPrev = this->m_cardHandler.cartaJugada;
-
-				// TODO: Escuchar los mensajes de todos los jugadores
-				// Podria ser un semaforo que vaya disminuyendo por cada mensaje recibido 
-				// hasta llegar a cero y que siga la ejecucion cuando sea cero.
 			}
 		}
 
 		msg("GANE!");
+		// TODO: Mandar un mesaje a todos lo jugadores de que el juego terminó
 
 		return 0;
 	}
@@ -75,6 +80,7 @@ namespace game {
 
 
 	Jugador::~Jugador() {
+		utils::SignalHandler::getInstance()->removerHandler(CardCheckHandler::SIG_CARTA_JUGADA);
 		utils::SignalHandler::destruir();
 	}
 
