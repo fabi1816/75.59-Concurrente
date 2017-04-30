@@ -1,5 +1,5 @@
-#ifndef _CARDCHECK_HANDLER_H
-#define _CARDCHECK_HANDLER_H
+#ifndef CARDCHECK_HANDLER_H
+#define CARDCHECK_HANDLER_H
 
 #include <iostream>
 
@@ -16,9 +16,7 @@ namespace game {
 			}
 
 
-			virtual ~CardCheckHandler() {
-				// nothing
-			}
+			virtual ~CardCheckHandler() = default;
 
 	};
 }

@@ -9,7 +9,7 @@ namespace game {
 	
 	class Dealer {
 		public:
-			Dealer(int cantPilas);
+			explicit Dealer(int cantPilas);
 
 			std::stack<int> getPila(int numPila);
 
