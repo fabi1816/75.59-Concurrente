@@ -16,7 +16,6 @@
 #include "CardCheckHandler.h"
 
 
-
 int main() {
 	try {
 		std::cout << "Prueba de juego - mkXVI" << std::endl;
@@ -33,18 +32,14 @@ int main() {
 		std::vector<autoTurno> turnos = game::TurnoFactory::buildTurnos(cantJugadores);
 
 		// Crear un proceso para cada jugador
-		std::vector<pid_t> pids;
 		for (int i = 0; i < cantJugadores; ++i) {
 			pid_t pid = fork();
 			if (pid == 0) {
 				int prox = (i+1) % cantJugadores;
 
 				game::Jugador j(i, cartas[i], turnos[i], turnos[prox]);
-
 				return j.jugar();
 			}
-
-			pids.push_back(pid);
 		}
 
 		// Ignoro las señales de chequeo de cartas
@@ -59,14 +54,8 @@ int main() {
 		for (int i = 0; i < cantJugadores; ++i) {
 			int stat = 0;
 			int res = wait(&stat);
-			if (res == -1 && errno != EINTR) {
-				throw std::system_error(errno, std::generic_category(), "Wait con error");
-
-			} else if(res == -1 && errno == EINTR) {
-				// TODO: Bloquear las señales en el main o ver alguna forma de
-				// pasar los pids de todos los jugadores a todos los jugadores
-				std::cout << "El Main fue interrumpido por una señal" << std::endl;
-				--i;
+			if (res == -1) {
+				throw std::system_error(errno, std::generic_category(), "Wait error");
 			}
 		}
 
