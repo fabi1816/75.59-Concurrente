@@ -36,7 +36,7 @@ namespace game {
 
 			void saludar(int carta, int cartaPrev);
 
-			void msg(std::string);
+			void msg(std::string txt);
 	};
 
 }
