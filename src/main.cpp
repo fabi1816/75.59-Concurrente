@@ -1,4 +1,5 @@
 #include <unistd.h>
+#include <signal.h>
 #include <sys/wait.h>
 
 #include <memory>
@@ -12,28 +13,13 @@
 #include "Dealer.h"
 #include "Turno.h"
 #include "TurnoFactory.h"
+#include "CardCheckHandler.h"
 
-
-#include "EventHandler.h"
-
-
-class handler : public utils::EventHandler {
-	public:
-		virtual int handleSignal(int signum) {
-			std::cout << "El main recivió una señal: " << signum << std::endl;
-			return 0;
-		}
-
-		virtual ~handler() = default;
-};
 
 
 int main() {
 	try {
-		std::cout << "Prueba de juego - mkXV" << std::endl;
-
-		handler pepe;
-		utils::SignalHandler::getInstance()->registrarHandler(SIGUSR1, &pepe);
+		std::cout << "Prueba de juego - mkXVI" << std::endl;
 
 		int cantJugadores = 2;
 		std::cout << "Jugadores = " << cantJugadores << std::endl;
@@ -61,6 +47,9 @@ int main() {
 			pids.push_back(pid);
 		}
 
+		// Ignoro las señales de chequeo de cartas
+		signal(game::CardCheckHandler::SIG_CARTA_JUGADA, SIG_IGN);
+
 		// Señala al primer jugador que comienze el juego
 		std::cout << "Empieza el juego" << std::endl;
 		turnos[0]->signal_v();
@@ -83,7 +72,6 @@ int main() {
 
 		// Destruir semaforos
 		game::TurnoFactory::destroyTurnos(turnos);
-		utils::SignalHandler::destruir();
 
 		std::cout << "Fin del juego" << std::endl;
 
