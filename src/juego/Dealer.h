@@ -3,18 +3,14 @@
 
 
 #include <stack>
+#include <vector>
 
 
 namespace game {
 	
 	class Dealer {
 		public:
-			explicit Dealer(int cantPilas);
-
-			std::stack<int> getPila(int numPila);
-
-		private:
-			int m_cantPilas;
+			static std::vector< std::stack<int> > getPilas(int cantPilas);
 	};
 }
 

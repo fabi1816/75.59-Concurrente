@@ -30,6 +30,13 @@ namespace game {
 			std::shared_ptr<Turno> m_turnoProximoJugador;
 
 			CardCheckHandler m_cardHandler;
+
+			int m_cartaPrev;
+
+
+			void saludar(int carta, int cartaPrev);
+
+			void msg(std::string);
 	};
 
 }

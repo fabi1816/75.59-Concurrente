@@ -26,21 +26,15 @@ int main() {
 		std::cout << "Jugadores = " << cantJugadores << std::endl;
 
 		// Repartir las cartas a los jugadores
-		game::Dealer repartidor(cantJugadores);
-		std::vector< std::stack<int> > cartas;
-
-		for (int i = 0; i < cantJugadores; ++i) {
-			std::stack<int> c = repartidor.getPila(i);
-
-			cartas.push_back(c);
-		}
+		typedef std::stack<int> pila;
+		std::vector<pila> cartas = game::Dealer::getPilas(cantJugadores);
 
 		// Crear turnos para los jugadores
 		typedef std::shared_ptr<game::Turno> autoTurno;
 		std::vector<autoTurno> turnos = game::TurnoFactory::buildTurnos(cantJugadores);
 
+		// Crear un proceso para cada jugador
 		std::vector<pid_t> pids;
-		// Se crean los jugadores en sus propios procesos
 		for (int i = 0; i < cantJugadores; ++i) {
 			pid_t pid = fork();
 			if (pid == 0) {
@@ -55,8 +49,8 @@ int main() {
 		}
 
 		// Señala al primer jugador que comienze el juego
-		//std::cout << "Empieza el juego" << std::endl;
-		//turnos[0]->signal_v();
+		std::cout << "Empieza el juego" << std::endl;
+		turnos[0]->signal_v();
 		
 		std::cout << "Señalo a los jugadores" << std::endl;
 		sleep(3);
