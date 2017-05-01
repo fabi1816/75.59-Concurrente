@@ -2,6 +2,7 @@
 #define LOCKER_H
 
 #include <fcntl.h>
+#include <unistd.h>
 
 #include <string>
 #include <cerrno>
@@ -30,6 +31,11 @@ namespace utils {
 			flock m_lockExclusivo;
 			flock m_lockCompartido;
 
+			int abrirArchivoLock(int modo);
+			int cerrarArchivoLock(int fd);
+
+			void aplicarLock(int fd, flock fl);
+			void quitarLock(int fd, flock fl);
 
 			void checkError(int result, std::string msg) const;
 	};
