@@ -29,10 +29,6 @@ namespace game {
 				return 0;
 			}
 
-
-			virtual ~CardCheckHandler() = default;
-
-
 	};
 }
 

@@ -7,6 +7,7 @@
 #include "Turno.h"
 #include "Saludador.h"
 #include "SignalHandler.h"
+#include "VictoryHandler.h"
 #include "CardCheckHandler.h"
 
 
@@ -34,6 +35,7 @@ namespace game {
 			std::shared_ptr<Saludador> m_saludador;
 
 			CardCheckHandler m_cardHandler;
+			VictoryHandler m_victoryHandler;
 
 			int m_cartaPrev;
 			std::stack<int> m_cartas;

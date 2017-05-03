@@ -14,6 +14,8 @@
 #include "Turno.h"
 #include "Saludador.h"
 #include "SemaforoFactory.h"
+
+#include "VictoryHandler.h"
 #include "CardCheckHandler.h"
 
 
@@ -48,8 +50,9 @@ int main() {
 			}
 		}
 
-		// Ignoro las señales de chequeo de cartas
+		// Ignoro las señales de chequeo de cartas/victorias
 		signal(game::CardCheckHandler::SIG_CARTA_JUGADA, SIG_IGN);
+		signal(game::VictoryHandler::SIG_VICTORIA, SIG_IGN);
 
 		// Señala al primer jugador que comienze el juego
 		std::cout << "Empieza el juego" << std::endl;
