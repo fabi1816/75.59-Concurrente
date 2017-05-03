@@ -12,13 +12,14 @@
 #include "Jugador.h"
 #include "Dealer.h"
 #include "Turno.h"
-#include "TurnoFactory.h"
+#include "Saludador.h"
+#include "SemaforoFactory.h"
 #include "CardCheckHandler.h"
 
 
 int main() {
 	try {
-		std::cout << "Prueba de juego - mkXVI" << std::endl;
+		std::cout << "Prueba de juego - mkXX" << std::endl;
 
 		int cantJugadores = 2;
 		std::cout << "Jugadores = " << cantJugadores << std::endl;
@@ -29,7 +30,10 @@ int main() {
 
 		// Crear turnos para los jugadores
 		typedef std::shared_ptr<game::Turno> autoTurno;
-		std::vector<autoTurno> turnos = game::TurnoFactory::buildTurnos(cantJugadores);
+		std::vector<autoTurno> turnos = game::SemaforoFactory::buildTurnos(cantJugadores);
+
+		// El saludador de los jugadores
+		std::shared_ptr<game::Saludador> saludador = game::SemaforoFactory::buildSaludador(cantJugadores);
 
 		// Crear un proceso para cada jugador
 		for (int i = 0; i < cantJugadores; ++i) {
@@ -37,7 +41,9 @@ int main() {
 			if (pid == 0) {
 				int prox = (i+1) % cantJugadores;
 
-				game::Jugador j(i, cartas[i], turnos[i], turnos[prox]);
+				game::Jugador j(i, turnos[i], turnos[prox], saludador);
+				j.setCartas(cartas[i]);
+
 				return j.jugar();
 			}
 		}
@@ -60,7 +66,8 @@ int main() {
 		}
 
 		// Destruir semaforos
-		game::TurnoFactory::destroyTurnos(turnos);
+		game::SemaforoFactory::destroyTurnos(turnos);
+		game::SemaforoFactory::destroySaludador(saludador);
 
 		std::cout << "Fin del juego" << std::endl;
 
