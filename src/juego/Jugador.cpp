@@ -2,7 +2,6 @@
 
 
 #include <iostream>
-#include <unistd.h>
 
 
 namespace game {
@@ -97,11 +96,10 @@ namespace game {
 
 		// Si es necesario saludamos a todos los jugadores y esperamos sus respuestas
 		if (saludamos) {
-			std::cout << "\t" << this->m_id << " --> Saludamos" << std::endl;
 			this->m_saludador->saludarJugadores();
-			std::cout << "\t" << this->m_id << " --> Esperamos escuchar los saludos" << std::endl;
 			this->m_saludador->escucharJugadores();
-			std::cout << "\t" << this->m_id << " --> Escuchamos todos los saludos" << std::endl;
+
+			// FIXME: Solo un proceso debe resetear el saludador, capaz el main...
 			this->m_saludador->reset();
 		}
 	}
