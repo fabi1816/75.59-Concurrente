@@ -22,8 +22,6 @@ namespace game {
 
 			int getSemId() const { return this->m_semaphoreID; }
 
-			virtual ~Turno() = default;
-
 		private:
 			int m_semaphoreID;
 			int m_semaphoreNum;
