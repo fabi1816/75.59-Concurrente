@@ -13,10 +13,12 @@ endif ()
 
 # Permite que el compilador vea los include
 include_directories ( ${PROJECT_SOURCE_DIR}/juego )
+include_directories ( ${PROJECT_SOURCE_DIR}/utils )
 
 # Donde estan las librerias
 add_subdirectory ( juego )
+add_subdirectory ( utils )
 
 add_executable ( ${PROJECT_NAME} main.cpp )
-target_link_libraries ( ${PROJECT_NAME} juego )
+target_link_libraries ( ${PROJECT_NAME} juego utils )
 
