@@ -5,16 +5,15 @@
 #include <unistd.h>
 
 #include <string>
-#include <cerrno>
-#include <stdexcept>
-#include <system_error>
+
+#include "Utils.h"
 
 
 namespace utils {
 
 	class Locker {
 		public:
-			Locker(std::string lockFile);
+			explicit Locker(std::string lockFile);
 
 			void tomarLockExclusivo();
 			void liberarLockExclusivo();
@@ -36,8 +35,6 @@ namespace utils {
 
 			void aplicarLock(int fd, flock fl);
 			void quitarLock(int fd, flock fl);
-
-			void checkError(int result, std::string msg) const;
 	};
 
 }

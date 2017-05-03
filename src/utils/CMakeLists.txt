@@ -3,6 +3,7 @@
 set ( SRCS 
 	SignalHandler.cpp
 	Locker.cpp
+	Utils.cpp
     )
 
 

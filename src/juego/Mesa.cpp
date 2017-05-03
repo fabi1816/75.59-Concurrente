@@ -9,51 +9,32 @@ namespace game {
     Mesa::Mesa(std::stack<int> cartas) {
         //Generación de la clave
         key_t clave = ftok("/bin/ls",21);
-        if (clave == -1) {
-            this->checkErrors(clave, "Falló la creación de la key");
-        } else {
-            //Crea la memoria compartida
-            this->shmId = shmget(clave, sizeof(cartas), 0644 | IPC_CREAT);
-
-            if (this->shmId == -1) {
-                this->checkErrors(shmId, "Falló la creación de la memoria compartida");
-            }
-
-        }
-
-
+	utils::checkError(clave, "Falló la creación de la key");
+	
+        //Crea la memoria compartida
+        this->shmId = shmget(clave, sizeof(cartas), 0644 | IPC_CREAT);
+	utils::checkError(shmId, "Falló la creación de la memoria compartida");
     }
 
-    void Mesa::checkErrors(int result, std::string msg) const {
-        if (result == -1) {
-            throw std::system_error(errno, std::generic_category(), msg);
-        }
-    }
 
     std::stack <int>* Mesa::observarMesa() {
         //Atacha el bloque de memoria al espacio de direcciones del proceso
         void *ptrTemporal = shmat(this->shmId, NULL, 0);
-        if (ptrTemporal == (void *) -1) {
-            this->checkErrors( *((int*)ptrTemporal), "No se pudo atachar ");
-        }
-        else {
-            this->ptrDatos = static_cast < std::stack<int>* > ( ptrTemporal );
-            return this->ptrDatos;
-        }
+	utils::checkError( *((int*)ptrTemporal), "No se pudo atachar ");
 
+        this->ptrDatos = static_cast < std::stack<int>* > ( ptrTemporal );
+        return this->ptrDatos;
     }
 
     Mesa::~Mesa() {
         //Detach del bloque de memoria
         int detach = shmdt(static_cast < void * > (this->ptrDatos));
-        if (detach == -1) {
-            this->checkErrors(detach, "No se pudo desatachar ");
-        } else {
-            int procAdosados = this->getNumeroDeJugadoresJugando();
-            if (procAdosados == 0) {
-                //Marca el segmento a ser destruido (Destruye la mesa)
-                shmctl(this->shmId, IPC_RMID, NULL);
-            }
+	utils::checkError(detach, "No se pudo desatachar ");
+
+        int procAdosados = this->getNumeroDeJugadoresJugando();
+        if (procAdosados == 0) {
+           //Marca el segmento a ser destruido (Destruye la mesa)
+           shmctl(this->shmId, IPC_RMID, NULL);
         }
 
     }

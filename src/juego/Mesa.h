@@ -10,9 +10,9 @@
 #include <sys/shm.h>
 #include <string>
 #include <stack>
-#include <stdexcept>
-#include <system_error>
-#include <cerrno>
+
+#include "Utils.h"
+
 
 namespace game {
 
@@ -39,11 +39,8 @@ namespace game {
         //Devuelve un stack de enteros con todas las cartas en la mesa actualmente.
         std::stack<int> VerCartasEnMesa();
 
-        //Funcion de excepciones
-        void checkErrors(int result, std::string msg) const;
-
-        //Cantidad de jugadores jugando (que tienen la mesa atachada)
-        int getNumeroDeJugadoresJugando();
+	//Cantidad de jugadores jugando (que tienen la mesa atachada)
+	int getNumeroDeJugadoresJugando();
 
         //Destruye mesa
         ~ Mesa() ;

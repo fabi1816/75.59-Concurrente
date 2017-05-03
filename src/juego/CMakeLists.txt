@@ -3,8 +3,10 @@
 set ( SRCS 
 	Jugador.cpp
 	Turno.cpp
-	TurnoFactory.cpp
+	SemaforoFactory.cpp
 	Dealer.cpp
+	Saludador.cpp
+	Mesa.cpp
     )
 
 

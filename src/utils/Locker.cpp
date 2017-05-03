@@ -97,16 +97,6 @@ namespace utils {
 			this->m_fileDescriptor = 0;
 		}
 	}
-
-
-	//---------------------------------------
 	
-
-	void Locker::checkError(int result, std::string msg) const {
-		if (-1 == result) {
-			throw std::system_error(errno, std::generic_category(), msg);
-		}
-	}
-
 }
 
