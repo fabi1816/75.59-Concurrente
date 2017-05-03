@@ -5,6 +5,7 @@ set ( SRCS
 	Turno.cpp
 	SemaforoFactory.cpp
 	Dealer.cpp
+	Saludos.cpp
     )
 
 
