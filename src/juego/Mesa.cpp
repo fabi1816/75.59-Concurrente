@@ -4,7 +4,7 @@
 
 #include "Mesa.h"
 
-namespace memoriaCompartida {
+namespace game {
 
     Mesa::Mesa(std::stack<int> cartas) {
         //Generación de la clave

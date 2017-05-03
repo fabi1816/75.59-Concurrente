@@ -14,8 +14,7 @@
 #include <system_error>
 #include <cerrno>
 
-#define String
-namespace memoriaCompartida {
+namespace game {
 
     class Mesa {
       private:
