@@ -31,6 +31,16 @@ namespace game {
 
 
 	void Saludador::reset() {
+		union semun {
+			int val;
+			struct semid_ds* b;
+			unsigned short* ar;
+			struct seminfo* in;
+		};
+
+		semun init = { this->m_cantJugadores };
+		int res = semctl(this->m_semaforoID, 0, SETVAL, init);
+		utils::checkError(res, "Falló el reseteo del semaforo");
 	}
 
 }

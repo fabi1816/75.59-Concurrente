@@ -1,8 +1,6 @@
 #ifndef CARDCHECK_HANDLER_H
 #define CARDCHECK_HANDLER_H
 
-#include <random>
-
 #include "EventHandler.h"
 
 
@@ -26,8 +24,7 @@ namespace game {
 				}
 
 				// Leo la ultima carta jugada de la mesa
-				std::minstd_rand rand(signum);	// random, por ahora...
-				cartaJugada = rand() & 12;
+				cartaJugada = 11;
 
 				return 0;
 			}

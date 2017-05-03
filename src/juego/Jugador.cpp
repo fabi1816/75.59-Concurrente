@@ -89,8 +89,6 @@ namespace game {
 
 		// Si es necesario saludamos a todos los jugadores y esperamos sus respuestas
 		if (saludamos) {
-			std::cout << "\t" << this->m_id << " ==> Saludar" << std::endl;
-			sleep(1);
 			this->m_saludador->saludarJugadores();
 			this->m_saludador->escucharJugadores();
 			this->m_saludador->reset();
