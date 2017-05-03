@@ -1,5 +1,5 @@
-#ifndef SALUDOS_H
-#define SALUDOS_H
+#ifndef SALUDADOR_H
+#define SALUDADOR_H
 
 #include <sys/sem.h>
 #include <sys/ipc.h>
@@ -10,10 +10,10 @@
 
 namespace game {
 
-	class Saludos {
+	class Saludador {
 
 		public:
-			explicit Saludos(int semID);
+			Saludador(int semID, int cantJugadores);
 
 			// Bloquea el proceso hasta que todos los jugadores saluden
 			void escucharJugadores();
@@ -21,11 +21,15 @@ namespace game {
 			// Realiza un saludo a todos los jugadores
 			void saludarJugadores();
 
+			// Resetea el contador de saludos
+			void reset();
+
 			int getSemId() const { return this->m_semaforoID; }
 
 		private:
 
 			int m_semaforoID;
+			int m_cantJugadores;
 
 	};
 }

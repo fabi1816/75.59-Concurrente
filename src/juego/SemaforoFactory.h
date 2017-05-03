@@ -11,7 +11,7 @@
 
 #include "Utils.h"
 #include "Turno.h"
-#include "Saludos.h"
+#include "Saludador.h"
 
 
 namespace game {
@@ -23,8 +23,8 @@ namespace game {
 			static std::vector< std::shared_ptr<Turno> > buildTurnos(int cant);
 			static void destroyTurnos(std::vector< std::shared_ptr<Turno> > turnos);
 
-			static std::shared_ptr<Saludos> buildSaludos(int cantJugadores);
-			static void destroySaludos(std::shared_ptr<Saludos> s);
+			static std::shared_ptr<Saludador> buildSaludador(int cantJugadores);
+			static void destroySaludador(std::shared_ptr<Saludador> s);
 
 		private:
 

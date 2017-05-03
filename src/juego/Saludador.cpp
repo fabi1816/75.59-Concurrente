@@ -1,13 +1,14 @@
-#include "Saludos.h"
+#include "Saludador.h"
 
 
 namespace game {
 
 
-	Saludos::Saludos(int semID) : m_semaforoID(semID) { }
+	Saludador::Saludador(int semID, int cantJugadores) :
+		m_semaforoID(semID), m_cantJugadores(cantJugadores) { }
 
 
-	void Saludos::escucharJugadores() {
+	void Saludador::escucharJugadores() {
 		// Espera a que sea cero el semaforo
 		sembuf sops = { };
 		sops.sem_num = 0;
@@ -18,7 +19,7 @@ namespace game {
 	}
 
 
-	void Saludos::saludarJugadores() {
+	void Saludador::saludarJugadores() {
 		// Disminuye en uno el contador del semaforo
 		sembuf sops = { };
 		sops.sem_num = 0;
@@ -26,6 +27,10 @@ namespace game {
 
 		int res = semop(this->m_semaforoID, &sops, 1);
 		utils::checkError(res, "Error al saludar a los otros jugadores");
+	}
+
+
+	void Saludador::reset() {
 	}
 
 }
