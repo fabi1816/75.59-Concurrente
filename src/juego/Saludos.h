@@ -21,6 +21,8 @@ namespace game {
 			// Realiza un saludo a todos los jugadores
 			void saludarJugadores();
 
+			int getSemId() const { return this->m_semaforoID; }
+
 		private:
 
 			int m_semaforoID;
