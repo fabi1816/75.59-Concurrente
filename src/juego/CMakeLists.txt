@@ -6,6 +6,7 @@ set ( SRCS
 	SemaforoFactory.cpp
 	Dealer.cpp
 	Saludador.cpp
+	Mesa.cpp
     )
 
 
