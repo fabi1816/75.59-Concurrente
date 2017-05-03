@@ -1,9 +1,9 @@
-#include "TurnoFactory.h"
+#include "SemaforoFactory.h"
 
 
 namespace game {
 
-	std::vector< std::shared_ptr<Turno> > TurnoFactory::buildTurnos(int cant) {
+	std::vector< std::shared_ptr<Turno> > SemaforoFactory::buildTurnos(int cant) {
 		// Crea la key para los semaforos
 		key_t k = ftok("/bin/ls", 19);
 		checkError(k, "Falló la creación de la key");
@@ -35,7 +35,7 @@ namespace game {
 	}
 
 
-	void TurnoFactory::destroyTurnos(std::vector< std::shared_ptr<Turno> > turnos) {
+	void SemaforoFactory::destroyTurnos(std::vector< std::shared_ptr<Turno> > turnos) {
 		if (turnos.empty()) {
 			return;
 		}
@@ -46,7 +46,7 @@ namespace game {
 	}
 
 
-	void TurnoFactory::checkError(int res, std::string txt) {
+	void SemaforoFactory::checkError(int res, std::string txt) {
 		if (res == -1) {
 			throw std::system_error(errno, std::generic_category(), txt);
 		}
