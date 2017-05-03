@@ -14,7 +14,7 @@ namespace utils {
 
 	class Locker {
 		public:
-			Locker(std::string lockFile);
+			explicit Locker(std::string lockFile);
 
 			void tomarLockExclusivo();
 			void liberarLockExclusivo();
