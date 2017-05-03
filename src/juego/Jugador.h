@@ -12,9 +12,10 @@
 
 namespace game {
 
-
 	class Jugador {
+
 		public:
+
 			Jugador(int id, std::stack<int> cartas, std::shared_ptr<Turno> t, std::shared_ptr<Turno> prox);
 
 			int jugar();
@@ -36,7 +37,6 @@ namespace game {
 
 			void saludar(int carta, int cartaPrev);
 
-			void msg(std::string txt);
 	};
 
 }

@@ -14,7 +14,7 @@ namespace game {
 
 	int Jugador::jugar() {
 		while (!this->m_cartas.empty()) {
-			msg("Espero mi turno");
+			std::cout << "\t" << this->m_id << " ==> Espero mi turno" << std::endl;
 
 			bool esMiTurno = this->m_turno->wait_p();
 			if (esMiTurno) {
@@ -34,12 +34,13 @@ namespace game {
 			// hasta llegar a cero y que siga la ejecucion cuando sea cero.
 
 			if (esMiTurno) {
-				msg("Pasé el turno al siguiente jugador");
+				std::cout << "\t" << this->m_id << " ==> Pasé el turno al siguiente jugador" << std::endl;
 				this->m_turnoProximoJugador->signal_v();
 			}
 		}
 
-		msg("GANE!");
+		std::cout << "\t" << this->m_id << " ==> GANE!!!" << txt << std::endl;
+
 		// TODO: Mandar un mesaje a todos lo jugadores de que el juego terminó
 
 		return 0;
@@ -50,32 +51,27 @@ namespace game {
 		// TODO: Mandar los mensajes al ether
 		switch (carta) {
 			case 7:
-				msg("Atrevido!");
+				std::cout << "\t" << this->m_id << " ==> Atrevido" << std::endl;
 				break;
 
 			case 10:
-				msg("Buenos dias señorita");
+				std::cout << "\t" << this->m_id << " ==> Buenos dias señorita" << std::endl;
 				break;
 
 			case 11:
-				msg("Buenas noches caballero");
+				std::cout << "\t" << this->m_id << " ==> Buenas noches caballero" << std::endl;
 				break;
 
 			case 12:
-				msg("( ゜ω゜)ゝ");
+				std::cout << "\t" << this->m_id << " ==> ( ゜ω゜)ゝ" << std::endl;
 				break;
 
 			default:
 				if (carta == cartaPrev) {
-					msg("Atrevido!");
+					std::cout << "\t" << this->m_id << " ==> Atrevido" << std::endl;
 				}
 				break;
 		}
-	}
-
-
-	void Jugador::msg(std::string txt) {
-		std::cout << "\t" << this->m_id << " ==> " << txt << std::endl;
 	}
 
 
