@@ -39,7 +39,7 @@ namespace game {
 			}
 		}
 
-		std::cout << "\t" << this->m_id << " ==> GANE!!!" << txt << std::endl;
+		std::cout << "\t" << this->m_id << " ==> GANE!!!" << std::endl;
 
 		// TODO: Mandar un mesaje a todos lo jugadores de que el juego terminó
 

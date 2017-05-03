@@ -8,23 +8,23 @@
 #include <memory>
 #include <vector>
 #include <string>
-#include <stdexcept>
-#include <system_error>
-#include <cerrno>
 
 #include "Turno.h"
+#include "Utils.h"
 
 
 namespace game {
 
 	class SemaforoFactory {
+
 		public:
+
 			static std::vector< std::shared_ptr<Turno> > buildTurnos(int cant);
 			static void destroyTurnos(std::vector< std::shared_ptr<Turno> > turnos);
 
 		private:
+
 			SemaforoFactory() = default;
-			static void checkError(int res, std::string txt);
 	};
 }
 
