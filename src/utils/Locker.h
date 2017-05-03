@@ -5,9 +5,8 @@
 #include <unistd.h>
 
 #include <string>
-#include <cerrno>
-#include <stdexcept>
-#include <system_error>
+
+#include "Utils.h"
 
 
 namespace utils {
@@ -36,8 +35,6 @@ namespace utils {
 
 			void aplicarLock(int fd, flock fl);
 			void quitarLock(int fd, flock fl);
-
-			void checkError(int result, std::string msg) const;
 	};
 
 }
