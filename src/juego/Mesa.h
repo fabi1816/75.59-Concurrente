@@ -35,9 +35,6 @@ namespace game {
 			//Devuelve un stack con todas las cartas en la mesa actualmente.
 			std::stack<int> VerCartasEnMesa();
 
-			//Funcion de excepciones
-			void checkError(int,std::string);
-
 			//Cantidad de jugadores jugando (que tienen la mesa atachada)
 			int getNumeroDeJugadoresJugando();
 
