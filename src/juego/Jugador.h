@@ -10,6 +10,8 @@
 #include "VictoryHandler.h"
 #include "CardCheckHandler.h"
 
+#include "Logger.h"
+
 
 namespace game {
 
@@ -28,6 +30,8 @@ namespace game {
 		private:
 
 			int m_id;
+
+			std::shared_ptr<utils::Logger> m_log;
 
 			std::shared_ptr<Turno> m_turno;
 			std::shared_ptr<Turno> m_turnoProximoJugador;

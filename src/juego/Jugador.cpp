@@ -1,15 +1,14 @@
 #include "Jugador.h"
 
 
-#include <iostream>
-
-
 namespace game {
 
 
 	Jugador::Jugador(int id, std::shared_ptr<Turno> t, std::shared_ptr<Turno> prox, std::shared_ptr<Saludador> sal)
 		: m_id(id), m_turno(t), m_turnoProximoJugador(prox), m_saludador(sal), m_cartaPrev(0)
 	{
+		this->m_log = utils::Logger::getLogger();
+
 		utils::SignalHandler::getInstance()->registrarHandler(CardCheckHandler::SIG_CARTA_JUGADA , &this->m_cardHandler);
 		utils::SignalHandler::getInstance()->registrarHandler(VictoryHandler::SIG_VICTORIA , &this->m_victoryHandler);
 	}
@@ -29,7 +28,7 @@ namespace game {
 
 			// Chequeo si alguien mas se quedó sin cartas
 			if (this->m_victoryHandler.finDelJuego) {
-				std::cout << "\t" << this->m_id << " ==> Perdí." << std::endl;
+				this->m_log->write(this->m_id, "Perdí");
 				return 1;
 			}
 
@@ -52,18 +51,22 @@ namespace game {
 	bool Jugador::esperarTurno() {
 		// Antes de esperar chequeo que no tenga algo que hacer
 		if (this->m_cardHandler.nuevaCartaEnLaMesa || this->m_victoryHandler.finDelJuego) {
-			std::cout << "\t" << this->m_id << " ==> No espero, alguien jugó una carta o perdí" << std::endl;
+			this->m_log->write(this->m_id, "No espero mi turno, hay que actuar");
 			return false;
 		}
 
 		// No tengo que jugar, sino esperar mi turno
-		std::cout << "\t" << this->m_id << " ==> Espero mi turno" << std::endl;
+		this->m_log->write(this->m_id, "Espero mi turno de jugar");
 		return this->m_turno->wait_p();
 	}
 
 
 	void Jugador::jugarCarta() {
-		std::cout << "\t" << this->m_id << " ==> Juego una carta: " << this->m_cartas.top() << std::endl;
+		// TODO: Locker la mesa
+		// TODO: Escribir la carta en la mesa
+		// TODO: Liberar la mesa
+		this->m_log->write(this->m_id, "Juego una carta:");
+		this->m_log->write(this->m_id, this->m_cartas.top());
 		this->m_cartas.pop();
 
 		// Aviso a todos que hay una carta nueva en la mesa
@@ -72,7 +75,8 @@ namespace game {
 
 
 	void Jugador::chequearCartas() {
-		std::cout << "\t" << this->m_id << " ==> Alguien jugó una carta: " << this->m_cardHandler.cartaJugada << std::endl;
+		this->m_log->write(this->m_id, "Una carta fue juagada:");
+		this->m_log->write(this->m_id, this->m_cardHandler.cartaJugada);
 
 		char saludo = getSaludo(this->m_cardHandler.cartaJugada, this->m_cartaPrev);
 		if (saludo != Saludador::IGNORAR) {
@@ -88,42 +92,43 @@ namespace game {
 	char Jugador::getSaludo(int carta, int cartaPrev) {
 		switch (carta) {
 			case 7:
-				std::cout << "\t" << this->m_id << " >>> Atrevido" << std::endl;
+				this->m_log->write(this->m_id, "Atrevido!");
 				return Saludador::ATREVIDO;
 
 			case 10:
-				std::cout << "\t" << this->m_id << " >>> Buenos dias señorita" << std::endl;
+				this->m_log->write(this->m_id, "Buenos dias señorita...");
 				return Saludador::BUENOS_DIAS_MISS;
 
 			case 11:
-				std::cout << "\t" << this->m_id << " >>> Buenas noches caballero" << std::endl;
+				this->m_log->write(this->m_id, "Buenas noches caballero.");
 				return Saludador::BUENAS_NOCHES_CABALLERO;
 
 			case 12:
-				std::cout << "\t" << this->m_id << " >>> ( ゜ω゜)ゝ" << std::endl;
+				this->m_log->write(this->m_id, "( ゜ω゜)ゝ");
 				return Saludador::VENIA;
 
 			default:
 				if (carta == cartaPrev) {
-					std::cout << "\t" << this->m_id << " >>> Atrevido" << std::endl;
+					this->m_log->write(this->m_id, "Atrevido!");
 					return Saludador::ATREVIDO;
 				}
 				break;
 		}
 
 		// No hay que saludar
+		this->m_log->write(this->m_id, "No hay que saludar");
 		return Saludador::IGNORAR;
 	}
 
 	
 	void Jugador::pasarTurno() {
-		std::cout << "\t" << this->m_id << " ==> Pasé el turno al siguiente jugador" << std::endl;
+		this->m_log->write(this->m_id, "Pasó el turno al siguiente jugador");
 		this->m_turnoProximoJugador->signal_v();
 	}
 
 
 	int Jugador::anunciarFinDelJuego() {
-		std::cout << "\t" << this->m_id << " ==> GANE!!!" << std::endl;
+		this->m_log->write(this->m_id, "Gane!!");
 
 		// Aviso a todos los jugadores que terminó el juego
 		utils::SignalHandler::getInstance()->sendSignal(0, VictoryHandler::SIG_VICTORIA);
