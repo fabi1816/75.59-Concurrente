@@ -84,6 +84,13 @@ int main(int argc, char* argv[]) {
 				std::cout << "Ganó el proceso: " << pid << std::endl;
 				log->write("\nTenemos un ganador");
 				log->write(pid, "Es el PID del ganador\n");
+
+			} else if (WIFSIGNALED(stat)) {
+				log->write(pid, "** Termino el proceso por una señal");
+				log->write(pid, WTERMSIG(stat));
+				
+			} else {
+				log->write(pid, "** Algo pasó!");
 			}
 		}
 
