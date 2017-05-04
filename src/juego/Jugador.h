@@ -43,7 +43,6 @@ namespace game {
 			CardCheckHandler m_cardHandler;
 			VictoryHandler m_victoryHandler;
 
-			int m_cartaPrev;
 			std::stack<int> m_cartas;
 
 			MesaCompartida m_mesa;

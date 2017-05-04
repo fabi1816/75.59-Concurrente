@@ -5,7 +5,7 @@ namespace game {
 
 
 	Jugador::Jugador(int id, std::shared_ptr<Turno> t, std::shared_ptr<Turno> prox, std::shared_ptr<Saludador> sal)
-		: m_id(id), m_turno(t), m_turnoProximoJugador(prox), m_saludador(sal), m_cartaPrev(0)
+		: m_id(id), m_turno(t), m_turnoProximoJugador(prox), m_saludador(sal)
 	{
 		this->m_log = utils::Logger::getLogger();
 
@@ -80,13 +80,11 @@ namespace game {
 		this->m_log->write(this->m_id, "Una carta fue juagada:");
 		this->m_log->write(this->m_id, this->m_cardHandler.cartaJugada);
 
-		char saludo = getSaludo(this->m_cardHandler.cartaJugada, this->m_cartaPrev);
+		char saludo = getSaludo(this->m_cardHandler.cartaJugada, this->m_cardHandler.cartaAnterior);
 		if (saludo != Saludador::IGNORAR) {
 			this->m_saludador->saludarJugadores(saludo);
 			this->m_saludador->escucharJugadores();
 		}
-
-		this->m_cartaPrev = this->m_cardHandler.cartaJugada;
 	}
 
 

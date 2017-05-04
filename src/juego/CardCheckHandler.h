@@ -14,6 +14,7 @@ namespace game {
 
 
 			int cartaJugada;
+			int cartaAnterior;
 			bool nuevaCartaEnLaMesa;
 
 
