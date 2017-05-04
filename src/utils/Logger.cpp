@@ -1,11 +1,11 @@
 #include "Logger.h"
-
+#include <fstream>
 namespace utils {
 
     Logger::Logger(std::string path){
-        iostream::ofstream archivo(path);  //"datos.txt"
-        //Logger::ofstream archivo;  // objeto de la clase ofstream
-        // archivo.open("datos.txt");
+        //Abre archivo para la escritura ubicado en el path.
+        std::ofstream archivo(path);
+
     }
 
     //Escribe la fecha y hora,el id del jugdor y mensaje en el archivo y muestra por consola

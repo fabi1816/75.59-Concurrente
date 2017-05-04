@@ -18,7 +18,7 @@ namespace utils {
 
 	class Logger {
         //Recibe el path del archivo donde se guardaran las acciones
-		Logger(std::string path);
+		Logger(std::string);
 
         //Escribe la fecha y hora,el id del jugdor y mensaje en el archivo y muestra por consola
         void escribir (int idJugador,std::string mensaje);
