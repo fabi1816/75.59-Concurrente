@@ -4,8 +4,8 @@
 namespace utils {
 
 	Locker::Locker(std::string lockFile) : m_fileName(lockFile), m_fileDescriptor(0) {
-		flock lockExc = { } ;
-		flock lockCom = { } ;
+		flock lockExc = { };
+		flock lockCom = { };
 
 		lockExc.l_whence = SEEK_SET;
 		lockCom.l_whence = SEEK_SET;
@@ -62,8 +62,8 @@ namespace utils {
 	
 	
 	int Locker::abrirArchivoLock(int modo) {
-		int fd = open(this->m_fileName.c_str(), modo);
-		checkError(fd, "Falló la apertura del archivo de lock");
+		int fd = open(this->m_fileName.c_str(), modo | O_CREAT, 0666);
+		checkError(fd, "Falló la creacion del archivo de lock");
 
 		return fd;
 	}
@@ -72,19 +72,22 @@ namespace utils {
 	int Locker::cerrarArchivoLock(int fd) {
 		int res = close(fd);
 		checkError(res, "Error al cerrar el archivo de lock");
+
+		res = unlink(this->m_fileName.c_str());
+		checkError(res, "Error al eliminar archivo de lock");
 		
 		return 0;
 	}
 
 
 	void Locker::aplicarLock(int fd, flock fl) {
-		int res = fcntl(fd, F_SETLKW, fl);
+		int res = fcntl(fd, F_SETLKW, &fl);
 		checkError(res, "Falló el seteo del lock");
 	}
 
 
 	void Locker::quitarLock(int fd, flock fl) {
-		int res = fcntl(fd, F_SETLK, fl);
+		int res = fcntl(fd, F_SETLK, &fl);
 		checkError(res, "Falló la remocion del lock");
 	}
 
