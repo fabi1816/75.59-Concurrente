@@ -25,6 +25,7 @@
 int main() {
 	try {
 		std::cout << "Atrevido! v3 - mkV" << std::endl;
+		log->write("== Atrevido! ==\n");
 
 		auto log = utils::Logger::getLogger();
 
@@ -74,8 +75,8 @@ int main() {
 			// Si un jugador terminó con status 0 fue el ganador
 			if (WIFEXITED(stat) && WEXITSTATUS(stat) == 0) {
 				std::cout << "Ganó el proceso: " << pid << std::endl;
-				log->write("Tenemos un ganador");
-				log->write(pid, "Es el PID del ganador");
+				log->write("\nTenemos un ganador");
+				log->write(pid, "Es el PID del ganador\n");
 			}
 		}
 
