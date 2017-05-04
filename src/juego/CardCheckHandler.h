@@ -14,17 +14,19 @@ namespace game {
 
 
 			int cartaJugada;
+			bool nuevaCartaEnLaMesa;
 
-			CardCheckHandler() : cartaJugada(0) { }
+
+			CardCheckHandler() : cartaJugada(0), nuevaCartaEnLaMesa(false) { }
 
 
-			virtual int handleSignal(int signum) {
-				if (signum != SIG_CARTA_JUGADA) {
-					return 1;	// No es la señal esperada
-				}
+			virtual int handleSignal(int) {
+				// TODO: Lock de lectura
+				// TODO: Obtener la ultima carta de la mesa
+				this->cartaJugada = 11;
+				// TODO: Liberar lock
 
-				// Leo la ultima carta jugada de la mesa
-				cartaJugada = 11;
+				this->nuevaCartaEnLaMesa = true;
 
 				return 0;
 			}

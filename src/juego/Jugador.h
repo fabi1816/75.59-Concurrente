@@ -41,7 +41,15 @@ namespace game {
 			std::stack<int> m_cartas;
 
 
-			void saludar(int carta, int cartaPrev);
+			bool esperarTurno();
+			void pasarTurno();
+
+			void jugarCarta();
+			void chequearCartas();
+
+			char getSaludo(int carta, int cartaPrev);
+
+			int anunciarFinDelJuego();
 
 	};
 

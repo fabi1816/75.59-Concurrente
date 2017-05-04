@@ -21,7 +21,7 @@
 
 int main() {
 	try {
-		std::cout << "Prueba de juego - mkXX" << std::endl;
+		std::cout << "Prueba de juego - mkXXV" << std::endl;
 
 		int cantJugadores = 2;
 		std::cout << "Jugadores = " << cantJugadores << std::endl;
@@ -48,6 +48,7 @@ int main() {
 
 				return j.jugar();
 			}
+			std::cout << "* " << pid << std::endl;
 		}
 
 		// Ignoro las señales de chequeo de cartas/victorias
@@ -62,9 +63,13 @@ int main() {
 		std::cout << "Espero por los jugadores" << std::endl;
 		for (int i = 0; i < cantJugadores; ++i) {
 			int stat = 0;
-			int res = wait(&stat);
-			if (res == -1) {
+			int pid = wait(&stat);
+			if (pid == -1) {
 				throw std::system_error(errno, std::generic_category(), "Wait error");
+			}
+
+			if (WIFEXITED(stat) && WEXITSTATUS(stat) == 0) {
+				std::cout << "Ganó el proceso: " << pid << std::endl;
 			}
 		}
 

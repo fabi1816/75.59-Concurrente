@@ -14,16 +14,17 @@ namespace game {
 
 			bool finDelJuego;
 
+
 			VictoryHandler() : finDelJuego(false) { }
 
 
 			virtual int handleSignal(int signum) {
 				if (signum != SIG_VICTORIA) {
-					this->finDelJuego = false;
 					return 1;	// No es la señal esperada
 				}
 
 				this->finDelJuego = true;
+
 				return 0;
 			}
 
