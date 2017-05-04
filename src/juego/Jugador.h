@@ -7,6 +7,7 @@
 #include "Logger.h"
 
 #include "Turno.h"
+#include "Dealer.h"
 #include "Saludador.h"
 #include "MesaCompartida.h"
 
@@ -54,6 +55,7 @@ namespace game {
 			void chequearCartas();
 
 			char getSaludo(int carta, int cartaPrev);
+			void ejecutarElAtrevido();
 
 			int anunciarFinDelJuego();
 

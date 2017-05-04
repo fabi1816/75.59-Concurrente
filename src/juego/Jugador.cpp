@@ -80,9 +80,15 @@ namespace game {
 		this->m_log->write(this->m_id, "Una carta fue juagada:");
 		this->m_log->write(this->m_id, this->m_cardHandler.cartaJugada);
 
+		// Chequea si necesita saludar
 		char saludo = getSaludo(this->m_cardHandler.cartaJugada, this->m_cardHandler.cartaAnterior);
 		if (saludo != Saludador::IGNORAR) {
 			this->m_saludador->saludarJugadores(saludo);
+
+			if (saludo == Saludador::ATREVIDO) {
+				ejecutarElAtrevido();
+			}
+
 			this->m_saludador->escucharJugadores();
 		}
 	}
@@ -134,6 +140,20 @@ namespace game {
 		utils::SignalHandler::getInstance()->sendSignal(0, VictoryHandler::SIG_VICTORIA);
 
 		return 0;
+	}
+
+
+	void Jugador::ejecutarElAtrevido() {
+		bool fuiUltimo = this->m_mesa.colocarMano();
+		if (!fuiUltimo) {
+			return;
+		}
+
+		this->m_log->write(this->m_id, "Fui el ultimo en colocar la mano en la mesa");
+
+		// Agrego las cartas que levante de la mesa a mi mano
+		std::stack<int> pilaCartas = this->m_mesa.levantarTodasLasCartas();
+		this->m_cartas = Dealer::mergeAndShuffle(this->m_cartas, pilaCartas);
 	}
 
 
