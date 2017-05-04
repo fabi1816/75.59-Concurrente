@@ -1,28 +1,48 @@
 #include "Logger.h"
 
+
 namespace utils {
 
-    Logger::Logger(std::string path){
-        iostream::ofstream archivo(path);  //"datos.txt"
-        //Logger::ofstream archivo;  // objeto de la clase ofstream
-        // archivo.open("datos.txt");
-    }
+	std::shared_ptr<Logger> Logger::m_loggerInstance = nullptr;
 
-    //Escribe la fecha y hora,el id del jugdor y mensaje en el archivo y muestra por consola
-    void Logger::escribir (int idJugador,std::string mensaje) {
-        //obtiene el tiempo del sistema
-        time_t tiempo = time(0);
-        struct tm *tlocal = localtime(&tiempo);
-        char output[128];
-        strftime(output, 128,"%d/%m/%y %H:%M:%S",tlocal);
-        //Imprime por consola
-        std::cout << output << idJugador << mensaje<< std::endl;
-        //Escribe en el archivo del log
-        //archivo << cadema
-        std::cin >> output ,idJugador , mensaje;
 
-    }
-    //Destructor
-    Logger::~Logger(){};
+	std::shared_ptr<Logger> Logger::getLogger() {
+		if (m_loggerInstance == nullptr) {
+			m_loggerInstance = std::shared_ptr<Logger>(new Logger("log.txt"));
+		}
+
+		return m_loggerInstance;
+	}
+
+
+	//---------------------------------------
+
+
+	Logger::Logger(std::string fileName)
+		: m_logLocker(fileName + ".lock"), m_fout(fileName, std::ios_base::trunc) 
+	{
+	}
+
+
+	void Logger::write(std::string txt) {
+		this->m_logLocker.tomarLockExclusivo();
+		this->m_fout << txt << std::endl;
+		this->m_logLocker.liberarLockExclusivo();
+	}
+
+
+	void Logger::write(int idJugador, std::string txt) {
+		this->m_logLocker.tomarLockExclusivo();
+		this->m_fout << idJugador << " -> " << txt << std::endl;
+		this->m_logLocker.liberarLockExclusivo();
+	}
+
+
+	void Logger::write(int idJugador, int n) {
+		this->m_logLocker.tomarLockExclusivo();
+		this->m_fout << idJugador << " -> " << n << std::endl;
+		this->m_logLocker.liberarLockExclusivo();
+	}
+
 }
 

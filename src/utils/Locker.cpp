@@ -62,7 +62,7 @@ namespace utils {
 	
 	
 	int Locker::abrirArchivoLock(int modo) {
-		int fd = open(this->m_fileName.c_str(), modo | O_CREAT, 0666);
+		int fd = open(this->m_fileName.c_str(), modo | O_CREAT, 0777);
 		checkError(fd, "Falló la creacion del archivo de lock");
 
 		return fd;

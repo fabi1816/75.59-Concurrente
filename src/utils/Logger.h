@@ -1,30 +1,39 @@
-//Clase que simula el log del juego
-
-
 #ifndef LOGGER_H
 #define LOGGER_H
 
 
-#include <time.h>
-#include <unistd.h>
-#include <stdlib.h>
-#include <stdio.h>
-#include <sys/time.h>
-#include <iostream>
-#include <fstream>
+#include <memory>
 #include <string>
+#include <fstream>
+
+#include "Locker.h"
+
 
 namespace utils {
 
 	class Logger {
-        //Recibe el path del archivo donde se guardaran las acciones
-		Logger(std::string path);
 
-        //Escribe la fecha y hora,el id del jugdor y mensaje en el archivo y muestra por consola
-        void escribir (int idJugador,std::string mensaje);
+		public:
 
-        //Destructor
-        ~Logger();
+			static std::shared_ptr<Logger> getLogger();
+
+
+			void write(std::string txt);
+			void write(int idJugador, std::string txt);
+			void write(int idJugador, int n);
+
+
+			virtual ~Logger() = default;
+
+		private:
+
+			static std::shared_ptr<Logger> m_loggerInstance;
+
+			Locker m_logLocker;
+			std::ofstream m_fout;
+
+
+			Logger(std::string fileName);
 
 	};
 }
