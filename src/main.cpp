@@ -24,7 +24,7 @@
 
 int main() {
 	try {
-		std::cout << "Atrevido! v3 - mkII" << std::endl;
+		std::cout << "Atrevido! v3 - mkV" << std::endl;
 
 		auto log = utils::Logger::getLogger();
 
