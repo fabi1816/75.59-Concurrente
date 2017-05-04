@@ -15,6 +15,7 @@
 #include "Dealer.h"
 #include "Turno.h"
 #include "Saludador.h"
+#include "MesaCompartida.h"
 #include "SemaforoFactory.h"
 
 #include "VictoryHandler.h"
@@ -26,12 +27,16 @@ int main() {
 	try {
 		auto log = utils::Logger::getLogger();
 
-		std::cout << "Atrevido! v3 - mkV" << std::endl;
+		std::cout << "Atrevido! v3 - mkVII" << std::endl;
 		log->write("== Atrevido! ==\n");
 
 		int cantJugadores = 2;
 		std::cout << "Cantidad de jugadores: " << cantJugadores << std::endl;
 		log->write(cantJugadores, "Es la cantidad de jugadores\n");
+
+		// Se crea la mesa donde jugar
+		game::MesaCompartida mesa;
+		mesa.initMesa(cantJugadores, "mesa.lock");
 
 		// Repartir las cartas a los jugadores
 		std::vector< std::stack<int> > cartas = game::Dealer::getPilas(cantJugadores);
@@ -41,6 +46,7 @@ int main() {
 
 		// El saludador de los jugadores
 		std::shared_ptr<game::Saludador> saludador = game::SemaforoFactory::buildSaludador(cantJugadores);
+
 
 		// Crear un proceso para cada jugador
 		for (int i = 0; i < cantJugadores; ++i) {

@@ -1,14 +1,7 @@
-/*
-/ Created by marcos on 27/04/17.
- Clase que representa la mesa del juego,implementada atraves de una memoria compartida
-*/
 #ifndef MESA_H
 #define MESA_H
 
-#include <sys/types.h>
-#include <sys/ipc.h>
-#include <sys/shm.h>
-#include <string>
+
 #include <stack>
 
 #include "Utils.h"
@@ -16,36 +9,38 @@
 
 namespace game {
 
-    class Mesa {
-      private:
+	class Mesa {
+		private:
 
-        int shmId;
-        std::stack<int>* ptrDatos;
+			// Un array estatico para colocar las cartas en la mesa
+			int m_pilaCartas[48];
+			int m_cantCartas;
+
+			int m_cantTotalJugadores;
+			int m_cantManos;
 
 
-      public:
-        //Crea la mesa usando una memoria compartida obteniendo un puntero a la direccion de inicio de la memoria compartida
-        Mesa(std::stack<int> cartas);
+		public:
+			Mesa();
 
-        //Cada jugador atacha la memoria compartida,debe ejecutarse desde el proceso del jugador.
-        std::stack<int>* observarMesa();
+			void initMesa(int cantJugadores);
 
-        //Juega cargas en la mesa(escribe en la memoria atachada)
-        void JugarCartaEnMesa(int carta);
+			void JugarCarta(int carta);
 
-        //Levanta todas las cartas de las mesa y la deja vacia.
-        std::stack<int> tomarTodasLasCartas();
+			// Permiten ver la ultima y ante-ultima cartas
+			int verUltimaCarta();
+			int verAnteUltimaCarta();
 
-        //Devuelve un stack de enteros con todas las cartas en la mesa actualmente.
-        std::stack<int> VerCartasEnMesa();
+			// Devuelve true si el jugador es el ultimo en colocar la mano
+			bool colocarMano();
 
-	//Cantidad de jugadores jugando (que tienen la mesa atachada)
-	int getNumeroDeJugadoresJugando();
+			//Levanta todas las cartas de las mesa y la deja vacia.
+			std::stack<int> levantarTodasLasCartas();
 
-        //Destruye mesa
-        ~ Mesa() ;
+			virtual ~Mesa() = default;
 
-    };
+	};
 
 }
-#endif //MESA_H
+
+#endif

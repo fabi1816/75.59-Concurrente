@@ -7,6 +7,7 @@ set ( SRCS
 	Dealer.cpp
 	Saludador.cpp
 	Mesa.cpp
+	MesaCompartida.cpp
     )
 
 
