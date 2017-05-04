@@ -44,27 +44,45 @@ namespace game {
 
 
 	void MesaCompartida::JugarCarta(int carta) {
+		this->m_lock->tomarLockExclusivo();
 		this->m_mesa->JugarCarta(carta);
+		this->m_lock->liberarLockExclusivo();
 	}
 
 
 	int MesaCompartida::verUltimaCarta() {
-		return this->m_mesa->verUltimaCarta();
+		this->m_lock->tomarLockCompartido();
+		int carta = this->m_mesa->verUltimaCarta();
+		this->m_lock->liberarLockCompartido();
+
+		return carta;
 	}
 
 
 	int MesaCompartida::verAnteUltimaCarta() {
-		return this->m_mesa->verAnteUltimaCarta();
+		this->m_lock->tomarLockCompartido();
+		int carta = this->m_mesa->verAnteUltimaCarta();
+		this->m_lock->liberarLockCompartido();
+
+		return carta;
 	}
 
 	
 	bool MesaCompartida::colocarMano() {
-		return this->m_mesa->colocarMano();
+		this->m_lock->tomarLockExclusivo();
+		bool res = this->m_mesa->colocarMano();
+		this->m_lock->liberarLockExclusivo();
+
+		return res;
 	}
 
 	
 	std::stack<int> MesaCompartida::levantarTodasLasCartas() {
-		return this->m_mesa->levantarTodasLasCartas();
+		this->m_lock->tomarLockExclusivo();
+		std::stack<int> pila = this->m_mesa->levantarTodasLasCartas();
+		this->m_lock->liberarLockExclusivo();
+
+		return pila;
 	}
 
 
