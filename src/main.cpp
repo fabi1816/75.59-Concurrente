@@ -27,7 +27,7 @@ int main() {
 	try {
 		auto log = utils::Logger::getLogger();
 
-		std::cout << "Atrevido! v3 - mkVII" << std::endl;
+		std::cout << "Atrevido! v3 - mkXV" << std::endl;
 		log->write("== Atrevido! ==\n");
 
 		int cantJugadores = 2;
@@ -46,7 +46,6 @@ int main() {
 
 		// El saludador de los jugadores
 		std::shared_ptr<game::Saludador> saludador = game::SemaforoFactory::buildSaludador(cantJugadores);
-
 
 		// Crear un proceso para cada jugador
 		for (int i = 0; i < cantJugadores; ++i) {

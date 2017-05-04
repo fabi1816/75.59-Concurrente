@@ -2,6 +2,7 @@
 #define CARDCHECK_HANDLER_H
 
 #include "EventHandler.h"
+#include "MesaCompartida.h"
 
 
 namespace game {
@@ -22,15 +23,18 @@ namespace game {
 
 
 			virtual int handleSignal(int) {
-				// TODO: Lock de lectura
-				// TODO: Obtener la ultima carta de la mesa
-				this->cartaJugada = 11;
-				// TODO: Liberar lock
+				// Obtiene las ultimas cartas jugadas
+				this->cartaJugada = this->m_mesa.verUltimaCarta();
+				this->cartaAnterior = this->m_mesa.verAnteUltimaCarta();
 
 				this->nuevaCartaEnLaMesa = true;
 
 				return 0;
 			}
+
+		private:
+
+			MesaCompartida m_mesa;
 
 	};
 }
