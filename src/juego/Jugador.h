@@ -46,6 +46,7 @@ namespace game {
 			int m_cartaPrev;
 			std::stack<int> m_cartas;
 
+			MesaCompartida m_mesa;
 
 			bool esperarTurno();
 			void pasarTurno();

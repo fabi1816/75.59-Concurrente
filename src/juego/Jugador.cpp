@@ -62,12 +62,14 @@ namespace game {
 
 
 	void Jugador::jugarCarta() {
-		// TODO: Locker la mesa
-		// TODO: Escribir la carta en la mesa
-		// TODO: Liberar la mesa
-		this->m_log->write(this->m_id, "Juego una carta:");
-		this->m_log->write(this->m_id, this->m_cartas.top());
+		int carta = this->m_cartas.top();
 		this->m_cartas.pop();
+
+		// Juega la carta
+		this->m_mesa.JugarCarta(carta);
+
+		this->m_log->write(this->m_id, "Juego una carta:");
+		this->m_log->write(this->m_id, carta);
 
 		// Aviso a todos que hay una carta nueva en la mesa
 		utils::SignalHandler::getInstance()->sendSignal(0, CardCheckHandler::SIG_CARTA_JUGADA);
