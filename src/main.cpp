@@ -23,14 +23,16 @@
 
 
 
-int main() {
+int main(int argc, char* argv[]) {
 	try {
 		auto log = utils::Logger::getLogger();
 
 		std::cout << "Atrevido! v3 - mkXV" << std::endl;
 		log->write("== Atrevido! ==\n");
 
-		int cantJugadores = 2;
+		// Uses the argument passed the the program or 4 as the default
+		int cantJugadores = (argc > 1) ? atoi(argv[1]) : 4;
+
 		std::cout << "Cantidad de jugadores: " << cantJugadores << std::endl;
 		log->write(cantJugadores, "Es la cantidad de jugadores\n");
 
