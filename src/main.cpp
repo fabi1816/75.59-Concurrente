@@ -47,7 +47,7 @@ int main() {
 			if (pid == 0) {
 				int prox = (i+1) % cantJugadores;
 
-				game::Jugador j(i, turnos[i], turnos[prox], saludador);
+				game::Jugador j(getpid(), turnos[i], turnos[prox], saludador);
 				j.setCartas(cartas[i]);
 
 				return j.jugar();
