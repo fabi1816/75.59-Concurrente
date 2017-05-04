@@ -24,10 +24,10 @@
 
 int main() {
 	try {
+		auto log = utils::Logger::getLogger();
+
 		std::cout << "Atrevido! v3 - mkV" << std::endl;
 		log->write("== Atrevido! ==\n");
-
-		auto log = utils::Logger::getLogger();
 
 		int cantJugadores = 2;
 		std::cout << "Cantidad de jugadores: " << cantJugadores << std::endl;
