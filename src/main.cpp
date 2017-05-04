@@ -9,6 +9,8 @@
 #include <iostream>
 #include <system_error>
 
+#include "Logger.h"
+
 #include "Jugador.h"
 #include "Dealer.h"
 #include "Turno.h"
@@ -19,20 +21,22 @@
 #include "CardCheckHandler.h"
 
 
+
 int main() {
 	try {
-		std::cout << "Prueba de juego - mkXXV" << std::endl;
+		std::cout << "Atrevido! v3 - mkII" << std::endl;
+
+		auto log = utils::Logger::getLogger();
 
 		int cantJugadores = 2;
-		std::cout << "Jugadores = " << cantJugadores << std::endl;
+		std::cout << "Cantidad de jugadores: " << cantJugadores << std::endl;
+		log->write(cantJugadores, "Es la cantidad de jugadores\n");
 
 		// Repartir las cartas a los jugadores
-		typedef std::stack<int> pila;
-		std::vector<pila> cartas = game::Dealer::getPilas(cantJugadores);
+		std::vector< std::stack<int> > cartas = game::Dealer::getPilas(cantJugadores);
 
 		// Crear turnos para los jugadores
-		typedef std::shared_ptr<game::Turno> autoTurno;
-		std::vector<autoTurno> turnos = game::SemaforoFactory::buildTurnos(cantJugadores);
+		auto turnos = game::SemaforoFactory::buildTurnos(cantJugadores);
 
 		// El saludador de los jugadores
 		std::shared_ptr<game::Saludador> saludador = game::SemaforoFactory::buildSaludador(cantJugadores);
@@ -48,7 +52,6 @@ int main() {
 
 				return j.jugar();
 			}
-			std::cout << "* " << pid << std::endl;
 		}
 
 		// Ignoro las señales de chequeo de cartas/victorias
@@ -57,10 +60,10 @@ int main() {
 
 		// Señala al primer jugador que comienze el juego
 		std::cout << "Empieza el juego" << std::endl;
+		log->write("== Comienza el juego de Atrevido ==");
 		turnos[0]->signal_v();
 		
 		// Se esperan que terminen todos los jugadores
-		std::cout << "Espero por los jugadores" << std::endl;
 		for (int i = 0; i < cantJugadores; ++i) {
 			int stat = 0;
 			int pid = wait(&stat);
@@ -68,8 +71,11 @@ int main() {
 				throw std::system_error(errno, std::generic_category(), "Wait error");
 			}
 
+			// Si un jugador terminó con status 0 fue el ganador
 			if (WIFEXITED(stat) && WEXITSTATUS(stat) == 0) {
 				std::cout << "Ganó el proceso: " << pid << std::endl;
+				log->write("Tenemos un ganador");
+				log->write(pid, "Es el PID del ganador");
 			}
 		}
 
@@ -78,6 +84,7 @@ int main() {
 		game::SemaforoFactory::destroySaludador(saludador);
 
 		std::cout << "Fin del juego" << std::endl;
+		log->write("== Fin del juego de Atrevido ==");
 
 		return 0;
 
