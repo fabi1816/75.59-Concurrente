@@ -6,8 +6,6 @@
 #include <sys/ipc.h>
 #include <sys/shm.h>
 
-#include <memory>
-
 #include "Mesa.h"
 #include "Utils.h"
 #include "Locker.h"
@@ -21,7 +19,7 @@ namespace game {
 
 			MesaCompartida();
 
-			void initMesa(int cantJugadores, std::string lockFileName);
+			void initMesa(int cantJugadores);
 
 			void JugarCarta(int carta);
 
@@ -38,7 +36,7 @@ namespace game {
 			int m_shmID;
 			Mesa* m_mesa;
 
-			std::unique_ptr<utils::Locker> m_lock;
+			utils::Locker m_lock;
 
 			int getNumeroDeJugadoresJugando();
 	};

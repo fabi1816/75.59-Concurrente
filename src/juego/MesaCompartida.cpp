@@ -3,7 +3,7 @@
 
 namespace game {
 
-	MesaCompartida::MesaCompartida() {
+	MesaCompartida::MesaCompartida() : m_lock("mesa_comp.lock") {
 		// Generación de la clave
 		key_t clave = ftok("/bin/ls", 'M');
 		utils::checkError(clave, "Falló la creación de la key");
@@ -37,50 +37,49 @@ namespace game {
 	}
 
 
-	void MesaCompartida::initMesa(int cantJugadores, std::string lockFileName) {
+	void MesaCompartida::initMesa(int cantJugadores) {
 		this->m_mesa->initMesa(cantJugadores);
-		this->m_lock = std::unique_ptr<utils::Locker>(new utils::Locker(lockFileName));
 	}
 
 
 	void MesaCompartida::JugarCarta(int carta) {
-		this->m_lock->tomarLockExclusivo();
+		this->m_lock.tomarLockExclusivo();
 		this->m_mesa->JugarCarta(carta);
-		this->m_lock->liberarLockExclusivo();
+		this->m_lock.liberarLockExclusivo();
 	}
 
 
 	int MesaCompartida::verUltimaCarta() {
-		this->m_lock->tomarLockCompartido();
+		this->m_lock.tomarLockCompartido();
 		int carta = this->m_mesa->verUltimaCarta();
-		this->m_lock->liberarLockCompartido();
+		this->m_lock.liberarLockCompartido();
 
 		return carta;
 	}
 
 
 	int MesaCompartida::verAnteUltimaCarta() {
-		this->m_lock->tomarLockCompartido();
+		this->m_lock.tomarLockCompartido();
 		int carta = this->m_mesa->verAnteUltimaCarta();
-		this->m_lock->liberarLockCompartido();
+		this->m_lock.liberarLockCompartido();
 
 		return carta;
 	}
 
 	
 	bool MesaCompartida::colocarMano() {
-		this->m_lock->tomarLockExclusivo();
+		this->m_lock.tomarLockExclusivo();
 		bool res = this->m_mesa->colocarMano();
-		this->m_lock->liberarLockExclusivo();
+		this->m_lock.liberarLockExclusivo();
 
 		return res;
 	}
 
 	
 	std::stack<int> MesaCompartida::levantarTodasLasCartas() {
-		this->m_lock->tomarLockExclusivo();
+		this->m_lock.tomarLockExclusivo();
 		std::stack<int> pila = this->m_mesa->levantarTodasLasCartas();
-		this->m_lock->liberarLockExclusivo();
+		this->m_lock.liberarLockExclusivo();
 
 		return pila;
 	}
@@ -92,7 +91,6 @@ namespace game {
 
 		return estado.shm_nattch;
 	}
-
 
 }
 
