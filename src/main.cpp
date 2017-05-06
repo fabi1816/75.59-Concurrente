@@ -27,7 +27,7 @@ int main(int argc, char* argv[]) {
 	try {
 		auto log = utils::Logger::getLogger();
 
-		std::cout << "Atrevido! v3 - mkXV" << std::endl;
+		std::cout << "Atrevido! v4 - mkI" << std::endl;
 		log->write("== Atrevido! ==\n");
 
 		// Uses the argument passed the the program or 4 as the default
@@ -38,7 +38,7 @@ int main(int argc, char* argv[]) {
 
 		// Se crea la mesa donde jugar
 		game::MesaCompartida mesa;
-		mesa.initMesa(cantJugadores, "mesa.lock");
+		mesa.initMesa(cantJugadores);
 
 		// Repartir las cartas a los jugadores
 		std::vector< std::stack<int> > cartas = game::Dealer::getPilas(cantJugadores);
@@ -60,6 +60,8 @@ int main(int argc, char* argv[]) {
 
 				return j.jugar();
 			}
+
+			log->write(getpid(), pid);
 		}
 
 		// Ignoro las señales de chequeo de cartas/victorias

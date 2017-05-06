@@ -1,5 +1,5 @@
 cmake_minimum_required ( VERSION 2.6 )
-project ( atrevidoV3 )
+project ( atrevidoV4 )
 
 set ( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -Wall -Wpedantic -Wextra -pthread" )
 set ( CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS} -O3 -DNDEBUG" )
