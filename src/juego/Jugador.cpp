@@ -77,7 +77,7 @@ namespace game {
 
 
 	void Jugador::chequearCartas() {
-		this->m_log->write(this->m_id, "Una carta fue juagada:");
+		this->m_log->write(this->m_id, "Una carta fue jugada:");
 		this->m_log->write(this->m_id, this->m_cardHandler.cartaJugada);
 
 		// Chequea si necesita saludar
@@ -128,7 +128,7 @@ namespace game {
 
 	
 	void Jugador::pasarTurno() {
-		this->m_log->write(this->m_id, "Pasó el turno al siguiente jugador");
+		this->m_log->write(this->m_id, "Paso el turno al siguiente jugador");
 		this->m_turnoProximoJugador->signal_v();
 	}
 
