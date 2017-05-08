@@ -18,7 +18,7 @@ namespace game {
 		utils::checkError(res, "Error al esperar escuchar a los jugadores");
 
 		// Ya se escuchó a todos los juagadores, reseteamos el semaforo
-		reset();
+		//reset();	// Parece que esto trae perdida de sincronizacion
 	}
 
 
@@ -46,6 +46,7 @@ namespace game {
 		int res = semctl(this->m_semaforoID, 0, SETVAL, init);
 		utils::checkError(res, "Falló el reseteo del semaforo");
 	}
+
 
 }
 

@@ -83,13 +83,16 @@ namespace game {
 		// Chequea si necesita saludar
 		char saludo = getSaludo(this->m_cardHandler.cartaJugada, this->m_cardHandler.cartaAnterior);
 		if (saludo != Saludador::IGNORAR) {
-			this->m_saludador->saludarJugadores(saludo);
-
 			if (saludo == Saludador::ATREVIDO) {
 				ejecutarElAtrevido();
 			}
 
+			// FIXME: El problema parece ser que despues de que un jugador escucha a todos
+			// resetea el semaforo para que bloquee, aunque no todos los jugadores hayan
+			// llegado al mismo
+			this->m_saludador->saludarJugadores(saludo);
 			this->m_saludador->escucharJugadores();
+			this->m_saludador->reset();
 		}
 	}
 

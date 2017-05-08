@@ -32,13 +32,13 @@ namespace game {
 
 			int getSemId() const { return this->m_semaforoID; }
 
+			// Resetea el contador de saludos
+			void reset();
+
 		private:
 
 			int m_semaforoID;
 			int m_cantJugadores;
-
-			// Resetea el contador de saludos
-			void reset();
 
 	};
 }

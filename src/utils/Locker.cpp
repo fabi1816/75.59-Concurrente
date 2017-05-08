@@ -1,8 +1,5 @@
 #include "Locker.h"
-#include <iostream>
 
-using std::cout;
-using std::endl;
 
 namespace utils {
 
@@ -65,7 +62,6 @@ namespace utils {
 	
 	
 	int Locker::abrirArchivoLock(int modo) {
-		cout << this->m_fileName << "," << modo << endl;
 		int fd = open(this->m_fileName.c_str(), modo | O_CREAT, 0777);
 		checkError(fd, "Falló la creacion del archivo de lock");
 
@@ -94,8 +90,9 @@ namespace utils {
 
 
 	Locker::~Locker() {
-		int res = unlink(this->m_fileName.c_str());
-		checkError(res, "Error al eliminar archivo de lock");
+		// TODO: Por ahora no borramos el archivo de lock
+		//int res = unlink(this->m_fileName.c_str());
+		//checkError(res, "Error al eliminar archivo de lock");
 		
 		this->m_fileDescriptor = 0;
 		this->m_fileName = "";
