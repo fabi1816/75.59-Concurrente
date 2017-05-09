@@ -36,10 +36,11 @@ namespace game {
 			void reset();
 
 		private:
-
 			int m_semaforoID;
 			int m_cantJugadores;
 
+			// Obtiene el valor del semaforo
+			int getVal();
 	};
 }
 

@@ -1,5 +1,7 @@
 #include "Saludador.h"
 
+#include <unistd.h>
+#include "Logger.h"
 
 namespace game {
 
@@ -10,27 +12,39 @@ namespace game {
 
 	void Saludador::escucharJugadores() {
 		// Espera a que sea cero el semaforo
-		sembuf sops = { };
+		sembuf sops;
 		sops.sem_num = 0;
 		sops.sem_op = 0;
+		sops.sem_flg = 0;
+
+		auto log = utils::Logger::getLogger();
+		log->write(getpid(), "Estoy por Escuchar" );
+		log->write(getpid(), getVal());
 
 		int res = semop(this->m_semaforoID, &sops, 1);
 		utils::checkError(res, "Error al esperar escuchar a los jugadores");
-
-		// Ya se escuchó a todos los juagadores, reseteamos el semaforo
-		//reset();	// Parece que esto trae perdida de sincronizacion
+		
+		log->write(getpid(), "Escuché!" );
+		log->write(getpid(), getVal());
 	}
 
 
 	void Saludador::saludarJugadores(char) {
 		// Disminuye en uno el contador del semaforo
-		sembuf sops = { };
+		sembuf sops;
 		sops.sem_num = 0;
 		sops.sem_op = -1;
+		sops.sem_flg = 0;
 
-		// TODO: Mandar el saludo a algun lado
+		auto log = utils::Logger::getLogger();
+		log->write(getpid(), "Estoy por saludar" );
+		log->write(getpid(), getVal());
+
 		int res = semop(this->m_semaforoID, &sops, 1);
 		utils::checkError(res, "Error al saludar a los otros jugadores");
+		
+		log->write(getpid(), "Saludé!" );
+		log->write(getpid(), getVal());
 	}
 
 
@@ -43,8 +57,20 @@ namespace game {
 		};
 
 		semun init = { this->m_cantJugadores };
+
+		auto log = utils::Logger::getLogger();
+		log->write(getpid(), "**************Resetear" );
+		log->write(getpid(), getVal());
+
 		int res = semctl(this->m_semaforoID, 0, SETVAL, init);
 		utils::checkError(res, "Falló el reseteo del semaforo");
+	}
+
+
+	int Saludador::getVal() {
+		int res = semctl(this->m_semaforoID, 0, GETVAL);
+		utils::checkError(res, "Falló el reseteo del semaforo");
+		return res;
 	}
 
 
