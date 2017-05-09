@@ -27,7 +27,7 @@ int main(int argc, char* argv[]) {
 	try {
 		auto log = utils::Logger::getLogger();
 
-		std::cout << "Atrevido! v4 - mkI" << std::endl;
+		std::cout << "Atrevido! v4 - mkIII" << std::endl;
 		log->write("== Atrevido! ==\n");
 
 		// Uses the argument passed the the program or 4 as the default
@@ -91,6 +91,9 @@ int main(int argc, char* argv[]) {
 				log->write(pid, "** Termino el proceso por una señal");
 				log->write(pid, WTERMSIG(stat));
 				
+			} else if (WIFEXITED(stat) && WEXITSTATUS(stat) == 1) {
+				log->write(pid, "Es el PID de un perdedor\n");
+
 			} else {
 				log->write(pid, "** Algo pasó!");
 			}
