@@ -32,15 +32,15 @@ namespace game {
 
 			int getSemId() const { return this->m_semaforoID; }
 
-			// Resetea el contador de saludos
-			void reset();
-
 		private:
 			int m_semaforoID;
 			int m_cantJugadores;
 
-			// Obtiene el valor del semaforo
-			int getVal();
+
+			// Devuelve la struct para realizar una operacion segun 
+			// el valor de sigOp en el semaforo nSem
+			sembuf getSignalOp(int nSem, int sigOp);
+
 	};
 }
 

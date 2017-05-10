@@ -1,7 +1,5 @@
 #include "Saludador.h"
 
-#include <unistd.h>
-#include "Logger.h"
 
 namespace game {
 
@@ -11,68 +9,52 @@ namespace game {
 
 
 	void Saludador::escucharJugadores() {
-		// Espera a que sea cero el semaforo
-		sembuf sops;
-		sops.sem_num = 0;
-		sops.sem_op = 0;
-		sops.sem_flg = 0;
+		// Cierra la 1er barrera
+		sembuf sops1 = getSignalOp(0, 1);;
+		int res1 = semop(this->m_semaforoID, &sops1, 1);
+		utils::checkError(res1, "Error al esperar escuchar a los jugadores [C1]");
 
-		auto log = utils::Logger::getLogger();
-		log->write(getpid(), "Estoy por Escuchar" );
-		log->write(getpid(), getVal());
+		// Abre la 2da barrera
+		sembuf sops2 = getSignalOp(1, -1);;
+		int res2 = semop(this->m_semaforoID, &sops2, 1);
+		utils::checkError(res2, "Error al esperar escuchar a los jugadores [A2]");
 
-		int res = semop(this->m_semaforoID, &sops, 1);
-		utils::checkError(res, "Error al esperar escuchar a los jugadores");
-		
-		log->write(getpid(), "Escuché!" );
-		log->write(getpid(), getVal());
+		// Espera a pasar la 2da barrera
+		sembuf sWait1 = getSignalOp(1, 0);;
+		int resWait = semop(this->m_semaforoID, &sWait1, 1);
+		utils::checkError(resWait, "Error al esperar escuchar a los jugadores [W2]");
 	}
 
 
 	void Saludador::saludarJugadores(char) {
-		// Disminuye en uno el contador del semaforo
+		// Cierra la 2da barrera
+		sembuf sops2 = getSignalOp(1, 1);;
+		int res2 = semop(this->m_semaforoID, &sops2, 1);
+		utils::checkError(res2, "Error al saludar a los otros jugadores [C2]");
+
+		// Abre la 1er barrera
+		sembuf sops1 = getSignalOp(0, -1);;
+		int res1 = semop(this->m_semaforoID, &sops1, 1);
+		utils::checkError(res1, "Error al saludar a los otros jugadores [A1]");
+
+		// Espera a pasar la 1er barrera
+		sembuf sWait1 = getSignalOp(0, 0);;
+		int resWait = semop(this->m_semaforoID, &sWait1, 1);
+		utils::checkError(resWait, "Error al saludar a los otros jugadores [W1]");
+	}
+
+
+	// Wait for zero -> sigOp == 0
+	// Add to sem -> sigOp == 1
+	// sustract from sem -> sigOp == -1
+	sembuf Saludador::getSignalOp(int nSem, int sigOp) {
 		sembuf sops;
-		sops.sem_num = 0;
-		sops.sem_op = -1;
+		sops.sem_num = nSem;
+		sops.sem_op = sigOp;
 		sops.sem_flg = 0;
 
-		auto log = utils::Logger::getLogger();
-		log->write(getpid(), "Estoy por saludar" );
-		log->write(getpid(), getVal());
-
-		int res = semop(this->m_semaforoID, &sops, 1);
-		utils::checkError(res, "Error al saludar a los otros jugadores");
-		
-		log->write(getpid(), "Saludé!" );
-		log->write(getpid(), getVal());
+		return sops;
 	}
-
-
-	void Saludador::reset() {
-		union semun {
-			int val;
-			struct semid_ds* b;
-			unsigned short* ar;
-			struct seminfo* in;
-		};
-
-		semun init = { this->m_cantJugadores };
-
-		auto log = utils::Logger::getLogger();
-		log->write(getpid(), "**************Resetear" );
-		log->write(getpid(), getVal());
-
-		int res = semctl(this->m_semaforoID, 0, SETVAL, init);
-		utils::checkError(res, "Falló el reseteo del semaforo");
-	}
-
-
-	int Saludador::getVal() {
-		int res = semctl(this->m_semaforoID, 0, GETVAL);
-		utils::checkError(res, "Falló el reseteo del semaforo");
-		return res;
-	}
-
 
 }
 

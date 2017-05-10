@@ -49,13 +49,17 @@ namespace game {
 		key_t k = ftok("/bin/ls", 20);
 		utils::checkError(k, "Falló la creación de la key");
 
-		// Crea e inicializa el semaforo
-		int semID = semget(k, 1, IPC_CREAT | 0644);
-		utils::checkError(semID, "Falló la creación del semaforo");
+		// Crea e inicializa los semaforos
+		int semID = semget(k, 2, IPC_CREAT | 0644);
+		utils::checkError(semID, "Falló la creación de los semaforos");
 
-		semun init = { cantJugadores };
-		int res = semctl(semID, 0, SETVAL, init);
-		utils::checkError(res, "Falló la inicializacion del semaforo");
+		semun initA = { cantJugadores };
+		int resA = semctl(semID, 0, SETVAL, initA);
+		utils::checkError(resA, "Falló la inicializacion del primer semaforo");
+
+		semun initB = { 0 };
+		int resB = semctl(semID, 1, SETVAL, initB);
+		utils::checkError(resB, "Falló la inicializacion del segundo semaforo");
 
 		// Devuelve el saludador dentro de un smart pointer
 		return std::make_shared<Saludador>(semID, cantJugadores);
@@ -64,7 +68,7 @@ namespace game {
 
 	void SemaforoFactory::destroySaludador(std::shared_ptr<Saludador> s) {
 		int res = semctl(s->getSemId(), 0, IPC_RMID);
-		utils::checkError(res, "Falló la destruccion del semaforo");
+		utils::checkError(res, "Falló la destruccion de los semaforos");
 	}
 
 }

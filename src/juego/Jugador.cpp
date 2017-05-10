@@ -34,8 +34,8 @@ namespace game {
 
 			// Alguien jugó una carta, pude hacer sido yo
 			if (this->m_cardHandler.nuevaCartaEnLaMesa) {
-				chequearCartas();
 				this->m_cardHandler.nuevaCartaEnLaMesa = false;
+				chequearCartas();
 			}
 
 			if (esMiTurno) { // Ya terminó mi turno, paso el turno al proximo jugador
@@ -71,9 +71,6 @@ namespace game {
 		this->m_log->write(this->m_id, "Juego una carta:");
 		this->m_log->write(this->m_id, carta);
 
-		// Preparo el saludador
-		this->m_saludador->reset();
-
 		// Aviso a todos que hay una carta nueva en la mesa
 		utils::SignalHandler::getInstance()->sendSignal(0, CardCheckHandler::SIG_CARTA_JUGADA);
 	}
@@ -85,12 +82,14 @@ namespace game {
 
 		// Chequea si necesita saludar
 		char saludo = getSaludo(this->m_cardHandler.cartaJugada, this->m_cardHandler.cartaAnterior);
-		if (saludo == Saludador::ATREVIDO) {
-			ejecutarElAtrevido();
-		}
+		if (saludo != Saludador::IGNORAR) {
+			if (saludo == Saludador::ATREVIDO) {
+				ejecutarElAtrevido();
+			}
 
-		this->m_saludador->saludarJugadores(saludo);
-		this->m_saludador->escucharJugadores();
+			this->m_saludador->saludarJugadores(saludo);
+			this->m_saludador->escucharJugadores();
+		}
 	}
 
 
@@ -154,7 +153,6 @@ namespace game {
 		// Agrego las cartas que levante de la mesa a mi mano
 		std::stack<int> pilaCartas = this->m_mesa.levantarTodasLasCartas();
 		this->m_cartas = Dealer::mergeAndShuffle(this->m_cartas, pilaCartas);
-		this->m_log->write(this->m_id, "Levanté todas las cartas");
 	}
 
 
