@@ -9,9 +9,8 @@ namespace game {
 
 
 	bool Turno::wait_p() {
-		sembuf sops = { };
-		sops.sem_num = this->m_semaphoreNum;
-		sops.sem_op = -1;	// Wait
+		// Wait
+		sembuf sops = getSignalOp(-1);
 
 		int res = semop(this->m_semaphoreID, &sops, 1);
 		utils::checkError(res, "Falló la espera del semaforo");
@@ -22,13 +21,21 @@ namespace game {
 
 
 	void Turno::signal_v() {
-		sembuf sops = { };
-		sops.sem_num = this->m_semaphoreNum;
-		sops.sem_op = 1;	// Signal
+		// Signal
+		sembuf sops = getSignalOp(1);
 
 		int res = semop(this->m_semaphoreID, &sops, 1);
 		utils::checkError(res, "Falló la señal del semaforo");
 	}
 
+
+	sembuf Turno::getSignalOp(int semOp) const {
+		sembuf sops;
+		sops.sem_num = this->m_semaphoreNum;
+		sops.sem_op = semOp;
+		sops.sem_flg = 0;
+
+		return sops;
+	}
 }
 

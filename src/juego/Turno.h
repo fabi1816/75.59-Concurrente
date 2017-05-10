@@ -26,6 +26,8 @@ namespace game {
 			int m_semaphoreID;
 			int m_semaphoreNum;
 
+			// Construye un sembuf
+			sembuf getSignalOp(int semOp) const;
 	};
 
 }
