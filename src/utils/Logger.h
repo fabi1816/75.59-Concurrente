@@ -33,7 +33,7 @@ namespace utils {
 			std::ofstream m_fout;
 
 
-			Logger(std::string fileName);
+			explicit Logger(std::string fileName);
 
 	};
 }
