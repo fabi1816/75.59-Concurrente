@@ -27,14 +27,14 @@ int main(int argc, char* argv[]) {
 	try {
 		auto log = utils::Logger::getLogger();
 
-		std::cout << "Atrevido! v4 - mkV" << std::endl;
+		std::cout << "Atrevido! v4 - mkVI" << std::endl;
 		log->write("== Atrevido! ==\n");
 
 		// Uses the argument passed the the program or 4 as the default
 		int cantJugadores = (argc > 1) ? atoi(argv[1]) : 4;
 
 		std::cout << "Cantidad de jugadores: " << cantJugadores << std::endl;
-		log->write(cantJugadores, "Es la cantidad de jugadores\n");
+		log->write("Cantidad de jugadores: ", cantJugadores);
 
 		// Se crea la mesa donde jugar
 		game::MesaCompartida mesa;
@@ -55,13 +55,13 @@ int main(int argc, char* argv[]) {
 			if (pid == 0) {
 				int prox = (i+1) % cantJugadores;
 
-				game::Jugador j(getpid(), turnos[i], turnos[prox], saludador);
+				game::Jugador j(turnos[i], turnos[prox], saludador);
 				j.setCartas(cartas[i]);
 
 				return j.jugar();
 			}
 
-			log->write(getpid(), pid);
+			log->write("Jugador => ", pid);
 		}
 
 		// Ignoro las señales de chequeo de cartas/victorias
@@ -70,7 +70,7 @@ int main(int argc, char* argv[]) {
 
 		// Señala al primer jugador que comienze el juego
 		std::cout << "Empieza el juego" << std::endl;
-		log->write("== Comienza el juego de Atrevido ==");
+		log->write("\n== Comienza el juego de Atrevido ==");
 		turnos[0]->signal_v();
 		
 		// Se esperan que terminen todos los jugadores
@@ -84,18 +84,18 @@ int main(int argc, char* argv[]) {
 			// Si un jugador terminó con status 0 fue el ganador
 			if (WIFEXITED(stat) && WEXITSTATUS(stat) == 0) {
 				std::cout << "Ganó el proceso: " << pid << std::endl;
-				log->write("\nTenemos un ganador");
-				log->write(pid, "Es el PID del ganador\n");
+				log->write("\nTenemos un ganador: ", pid);
+				log->write("\n");
 
 			} else if (WIFSIGNALED(stat)) {
-				log->write(pid, "** Termino el proceso por una señal");
-				log->write(pid, WTERMSIG(stat));
+				log->write("*\n** Termino el proceso: ", pid);
+				log->write("** Por la señal: ", WTERMSIG(stat));
 				
 			} else if (WIFEXITED(stat) && WEXITSTATUS(stat) == 1) {
-				log->write(pid, "Es el PID de un perdedor\n");
+				log->write("Perdedor: ", pid);
 
 			} else {
-				log->write(pid, "** Algo pasó!");
+				log->write("*\n** Algo paso con: ", pid);
 			}
 		}
 
@@ -109,7 +109,7 @@ int main(int argc, char* argv[]) {
 		return 0;
 
 	} catch (const std::system_error &e) {
-		std::cout << "\n** Error: " << e.code() << " -> " << e.what() << std::endl;
+		std::cout << "*\n** Error: " << e.code() << " -> " << e.what() << std::endl;
 		return -1;
 	}
 }

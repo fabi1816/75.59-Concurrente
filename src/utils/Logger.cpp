@@ -31,16 +31,23 @@ namespace utils {
 	}
 
 
-	void Logger::write(int idJugador, std::string txt) {
+	void Logger::write(std::string txt, int i) {
 		this->m_logLocker.tomarLockExclusivo();
-		this->m_fout << idJugador << " -> " << txt << std::endl;
+		this->m_fout << txt << i << std::endl;
 		this->m_logLocker.liberarLockExclusivo();
 	}
 
 
-	void Logger::write(int idJugador, int n) {
+	void Logger::writepid(std::string txt) {
 		this->m_logLocker.tomarLockExclusivo();
-		this->m_fout << idJugador << " -> " << n << std::endl;
+		this->m_fout << getpid() << " -> " << txt << std::endl;
+		this->m_logLocker.liberarLockExclusivo();
+	}
+
+
+	void Logger::writepid(std::string txt, int i) {
+		this->m_logLocker.tomarLockExclusivo();
+		this->m_fout << getpid() << " -> " << txt << i << std::endl;
 		this->m_logLocker.liberarLockExclusivo();
 	}
 

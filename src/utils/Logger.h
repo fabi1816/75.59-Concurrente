@@ -1,6 +1,7 @@
 #ifndef LOGGER_H
 #define LOGGER_H
 
+#include <unistd.h>
 
 #include <memory>
 #include <string>
@@ -14,13 +15,16 @@ namespace utils {
 	class Logger {
 
 		public:
-
 			static std::shared_ptr<Logger> getLogger();
 
 
+			// Only writes the given text
 			void write(std::string txt);
-			void write(int idJugador, std::string txt);
-			void write(int idJugador, int n);
+			void write(std::string txt, int i);
+
+			// Writes the pid plus any given data
+			void writepid(std::string txt);
+			void writepid(std::string txt, int i);
 
 
 			virtual ~Logger() = default;

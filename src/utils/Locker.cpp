@@ -4,8 +4,8 @@
 namespace utils {
 
 	Locker::Locker(std::string lockFile) : m_fileName(lockFile), m_fileDescriptor(0) {
-		flock lockExc = { };
-		flock lockCom = { };
+		flock lockExc;
+		flock lockCom;
 
 		lockExc.l_whence = SEEK_SET;
 		lockCom.l_whence = SEEK_SET;
@@ -15,6 +15,9 @@ namespace utils {
 
 		lockExc.l_len = 0;
 		lockCom.l_len = 0;
+
+		lockExc.l_pid = 0;
+		lockCom.l_pid = 0;
 
 		this->m_lockExclusivo = lockExc;
 		this->m_lockCompartido = lockCom;
