@@ -56,11 +56,11 @@ namespace game {
 		int semID = semget(kSem, 2, IPC_CREAT | 0644);
 		utils::checkError(semID, "Falló la creación de los semaforos");
 
-		semun initA = { cantJugadores };
+		semun initA = { 0 };
 		int resA = semctl(semID, 0, SETVAL, initA);
 		utils::checkError(resA, "Falló la inicializacion del primer semaforo");
 
-		semun initB = { 0 };
+		semun initB = { 1 };
 		int resB = semctl(semID, 1, SETVAL, initB);
 		utils::checkError(resB, "Falló la inicializacion del segundo semaforo");
 
