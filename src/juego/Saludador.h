@@ -1,11 +1,13 @@
 #ifndef SALUDADOR_H
 #define SALUDADOR_H
 
-#include <sys/sem.h>
-#include <sys/ipc.h>
 #include <sys/types.h>
+#include <sys/ipc.h>
+#include <sys/sem.h>
+#include <sys/shm.h>
 
 #include "Utils.h"
+#include "Locker.h"
 
 
 namespace game {
@@ -22,26 +24,42 @@ namespace game {
 			static const char IGNORAR = 'I';
 
 
-			Saludador(int semID, int cantJugadores);
+			Saludador(int semID, int shmID);
+			virtual ~Saludador();
+
+			void init(int cantJugadores);
+
+			
+			// Realiza un saludo a todos los jugadores
+			void saludarJugadores(char saludo);
 
 			// Bloquea el proceso hasta que todos los jugadores saluden
 			void escucharJugadores();
 
-			// Realiza un saludo a todos los jugadores
-			void saludarJugadores(char saludo);
 
 			int getSemId() const { return this->m_semaforoID; }
+			int getShmId() const { return this->m_sharedMemID; }
 
 		private:
 			int m_semaforoID;
 			int m_cantJugadores;
+
+			// Contador compartido entre procesos
+			int m_sharedMemID;
+			int* m_contador;
+
+			utils::Locker m_lock;
 
 
 			// Devuelve la struct para realizar una operacion segun 
 			// el valor de sigOp en el semaforo nSem
 			sembuf getSignalOp(int nSem, int sigOp);
 
-			int getVal(int semNum);
+
+			// Controlan al contador
+			void plus1()  { ++(*this->m_contador); }
+			void minus1() { --(*this->m_contador); }
+			int getValContador() { return (*this->m_contador); }
 	};
 }
 
