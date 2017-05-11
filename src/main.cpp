@@ -15,6 +15,7 @@
 #include "Dealer.h"
 #include "Turno.h"
 #include "Saludador.h"
+#include "Disparador.h"
 #include "MesaCompartida.h"
 #include "SemaforoFactory.h"
 
@@ -27,7 +28,7 @@ int main(int argc, char* argv[]) {
 	try {
 		auto log = utils::Logger::getLogger();
 
-		std::cout << "== Atrevido! v4 - mkIX ==" << std::endl;
+		std::cout << "== Atrevido! v4 - mkX ==" << std::endl;
 		log->write("== Atrevido! ==\n");
 
 		// Uses the argument passed the the program or 4 as the default
@@ -49,6 +50,9 @@ int main(int argc, char* argv[]) {
 		// El saludador de los jugadores
 		std::shared_ptr<game::Saludador> saludador = game::SemaforoFactory::buildSaludador(cantJugadores);
 
+		// Avisa cuando esta listo el jugador
+		game::Disparador trigger = game::SemaforoFactory::buildDisparador(cantJugadores);
+
 		// Crear un proceso para cada jugador
 		for (int i = 0; i < cantJugadores; ++i) {
 			pid_t pid = fork();
@@ -58,7 +62,7 @@ int main(int argc, char* argv[]) {
 				game::Jugador j(turnos[i], turnos[prox], saludador);
 				j.setCartas(cartas[i]);
 
-				return j.jugar();
+				return j.jugar(trigger);
 			}
 
 			log->write("Jugador => ", pid);
@@ -67,6 +71,9 @@ int main(int argc, char* argv[]) {
 		// Ignoro las señales de chequeo de cartas/victorias
 		signal(game::CardCheckHandler::SIG_CARTA_JUGADA, SIG_IGN);
 		signal(game::VictoryHandler::SIG_VICTORIA, SIG_IGN);
+
+		// Se espera a que todos los jugadores esten listos
+		trigger.esperarATodos();
 
 		// Señala al primer jugador que comienze el juego
 		std::cout << "\n== Empieza el juego ==" << std::endl;
@@ -84,8 +91,9 @@ int main(int argc, char* argv[]) {
 		}
 
 		// Destruir semaforos
-		game::SemaforoFactory::destroyTurnos(turnos);
+		game::SemaforoFactory::destroyDisparador(trigger);
 		game::SemaforoFactory::destroySaludador(saludador);
+		game::SemaforoFactory::destroyTurnos(turnos);
 
 		std::cout << "\n== Fin del juego ==" << std::endl;
 		log->write("\n== Fin del juego de Atrevido ==");

@@ -37,7 +37,7 @@ namespace game {
 
 		int semID = turnos.front()->getSemId();
 		int res = semctl(semID, 0, IPC_RMID);
-		utils::checkError(res, "Falló la destruccion de los semaforos en el set");
+		utils::checkError(res, "Falló la destruccion de los turnos");
 	}
 
 
@@ -77,16 +77,43 @@ namespace game {
 
 
 	void SemaforoFactory::destroySaludador(std::shared_ptr<Saludador> s) {
-		int res = semctl(s->getShmId(), 0, IPC_RMID);
-		utils::checkError(res, "Falló la destruccion de los semaforos");
+		int res = semctl(s->getSemId(), 0, IPC_RMID);
+		utils::checkError(res, "Falló la destruccion del saludador");
 
-		// Si nadie lo tiene attachado destruye la memoria compartida
+		// Destruye la memoria compartida
 		shmid_ds stat;
 		shmctl(s->getShmId(), IPC_STAT, &stat);
-		if (stat.shm_nattch == 0) {
+		if (stat.shm_nattch == 1) {	// El main tiene una instancia del saludador
 			int r = shmctl(s->getShmId(), IPC_RMID, NULL);
 			utils::checkError(r, "Falló la destruccion de la memoria compartida del saludador");
 		}
+	}
+
+
+	//---------------------------------------
+
+
+	Disparador SemaforoFactory::buildDisparador(int cantJugadores) {
+		// Crea la key
+		key_t kSem = ftok("/bin/ls", 48);
+		utils::checkError(kSem, "Falló la creación de la clave del semaforo");
+
+		// Crea e inicializa el semaforo
+		int semID = semget(kSem, 1, IPC_CREAT | 0644);
+
+		semun init = { cantJugadores };
+		int res = semctl(semID, 0, SETVAL, init);
+		utils::checkError(res, "Falló la inicializacion del semaforo");
+
+		Disparador d(semID);
+
+		return d;
+	}
+
+
+	void SemaforoFactory::destroyDisparador(Disparador d) {
+		int res = semctl(d.getSemId(), 0, IPC_RMID);
+		utils::checkError(res, "Falló la destruccion del disparador");
 	}
 
 }

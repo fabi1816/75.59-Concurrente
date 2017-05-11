@@ -12,6 +12,7 @@
 #include "Utils.h"
 #include "Turno.h"
 #include "Saludador.h"
+#include "Disparador.h"
 
 
 namespace game {
@@ -25,6 +26,10 @@ namespace game {
 
 			static std::shared_ptr<Saludador> buildSaludador(int cantJugadores);
 			static void destroySaludador(std::shared_ptr<Saludador> s);
+
+			static Disparador buildDisparador(int cantJugadores);
+			static void destroyDisparador(Disparador d);
+
 
 		private:
 

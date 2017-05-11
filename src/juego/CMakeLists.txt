@@ -1,13 +1,15 @@
 
 #La lista de clases en el directorio actual
 set ( SRCS 
-	Jugador.cpp
+	BaseSemaforo.cpp
 	Turno.cpp
-	SemaforoFactory.cpp
-	Dealer.cpp
+	Disparador.cpp
 	Saludador.cpp
+	SemaforoFactory.cpp
 	Mesa.cpp
 	MesaCompartida.cpp
+	Jugador.cpp
+	Dealer.cpp
     )
 
 

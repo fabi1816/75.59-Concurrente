@@ -19,9 +19,11 @@ namespace game {
 	}
 
 
-	int Jugador::jugar() {
+	int Jugador::jugar(Disparador disp) {
+		// El jugador esta listo para comenzar
+		disp.listo();
+
 		while (!this->m_cartas.empty()) {
-			this->m_log->writepid("d");
 			bool esMiTurno = esperarTurno();
 			if (esMiTurno) {
 				jugarCarta();
@@ -36,12 +38,10 @@ namespace game {
 			// Alguien jugó una carta, pude hacer sido yo
 			chequearCartas();
 
-			this->m_log->writepid("b");
 			if (esMiTurno && !this->m_cartas.empty()) {
 				// Ya terminó mi turno, paso el turno al proximo jugador
 				pasarTurno();
 			}
-			this->m_log->writepid("c");
 		}
 
 		// Gané
@@ -51,16 +51,15 @@ namespace game {
 
 	bool Jugador::esperarTurno() {
 		// Antes de esperar veo si ya jugaron alguna carta 
-		this->m_log->writepid("e");
-		if (this->m_cardHandler.nuevaCartaEnLaMesa) {
-			this->m_log->writepid("No espero mi turno, ya hay una carta jugada");
+		if (this->m_victoryHandler.finDelJuego) {
+			this->m_log->writepid("No espero mi turno, ya ganó alguien mas");
 			return false;
 		}
 
-		this->m_log->writepid("f");
+		this->m_log->writepid("[Debug] chequear carta nueva");
 		// Antes de esperar veo si alguien ya ganó
-		if (this->m_victoryHandler.finDelJuego) {
-			this->m_log->writepid("No espero mi turno, ya ganó alguien mas");
+		if (this->m_cardHandler.nuevaCartaEnLaMesa) {
+			this->m_log->writepid("No espero mi turno, ya hay una carta jugada");
 			return false;
 		}
 
@@ -99,7 +98,6 @@ namespace game {
 		}
 
 		this->m_saludador->escucharJugadores();
-		this->m_log->writepid("a");
 	}
 
 

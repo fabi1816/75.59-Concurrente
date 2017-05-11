@@ -9,6 +9,7 @@
 #include "Turno.h"
 #include "Dealer.h"
 #include "Saludador.h"
+#include "Disparador.h"
 #include "MesaCompartida.h"
 
 #include "SignalHandler.h"
@@ -26,7 +27,7 @@ namespace game {
 
 			void setCartas(std::stack<int> cartas);
 
-			int jugar();
+			int jugar(Disparador disp);
 
 			virtual ~Jugador();
 
