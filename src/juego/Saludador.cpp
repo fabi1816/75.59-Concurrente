@@ -8,24 +8,6 @@ namespace game {
 		m_semaforoID(semID), m_cantJugadores(cantJugadores) { }
 
 
-	void Saludador::escucharJugadores() {
-		// Cierra la 1er barrera
-		sembuf sops1 = getSignalOp(0, 1);
-		int res1 = semop(this->m_semaforoID, &sops1, 1);
-		utils::checkError(res1, "Error al esperar escuchar a los jugadores [C1]");
-
-		// Abre la 2da barrera
-		sembuf sops2 = getSignalOp(1, -1);
-		int res2 = semop(this->m_semaforoID, &sops2, 1);
-		utils::checkError(res2, "Error al esperar escuchar a los jugadores [A2]");
-
-		// Espera a pasar la 2da barrera
-		sembuf sWait1 = getSignalOp(1, 0);
-		int resWait = semop(this->m_semaforoID, &sWait1, 1);
-		utils::checkError(resWait, "Error al esperar escuchar a los jugadores [W2]");
-	}
-
-
 	void Saludador::saludarJugadores(char) {
 		// Cierra la 2da barrera
 		sembuf sops2 = getSignalOp(1, 1);
@@ -44,6 +26,24 @@ namespace game {
 	}
 
 
+	void Saludador::escucharJugadores() {
+		// Cierra la 1er barrera
+		sembuf sops1 = getSignalOp(0, 1);
+		int res1 = semop(this->m_semaforoID, &sops1, 1);
+		utils::checkError(res1, "Error al esperar escuchar a los jugadores [C1]");
+
+		// Abre la 2da barrera
+		sembuf sops2 = getSignalOp(1, -1);
+		int res2 = semop(this->m_semaforoID, &sops2, 1);
+		utils::checkError(res2, "Error al esperar escuchar a los jugadores [A2]");
+
+		// Espera a pasar la 2da barrera
+		sembuf sWait1 = getSignalOp(1, 0);
+		int resWait = semop(this->m_semaforoID, &sWait1, 1);
+		utils::checkError(resWait, "Error al esperar escuchar a los jugadores [W2]");
+	}
+
+
 	// Wait for zero -> sigOp == 0
 	// Add to sem -> sigOp == 1
 	// sustract from sem -> sigOp == -1
@@ -56,5 +56,9 @@ namespace game {
 		return sops;
 	}
 
+
+	int Saludador::getVal(int semNum) {
+		return semctl(this->m_semaforoID, semNum, GETVAL);
+	}
 }
 

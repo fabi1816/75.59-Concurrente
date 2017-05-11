@@ -41,6 +41,7 @@ namespace game {
 			// el valor de sigOp en el semaforo nSem
 			sembuf getSignalOp(int nSem, int sigOp);
 
+			int getVal(int semNum);
 	};
 }
 
