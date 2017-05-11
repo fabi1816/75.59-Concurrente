@@ -1,6 +1,9 @@
 #ifndef VICTORY_HANDLER_H
 #define VICTORY_HANDLER_H
 
+#include <string>
+
+#include "Locker.h"
 #include "EventHandler.h"
 
 
@@ -12,16 +15,15 @@ namespace game {
 			static const int SIG_VICTORIA = SIGUSR2;
 
 
+			VictoryHandler(std::string lockFile);
+
+			virtual int handleSignal(int);
+		
+			bool termino();
+
+		private:
 			bool finDelJuego;
-
-
-			VictoryHandler() : finDelJuego(false) { }
-
-
-			virtual int handleSignal(int) {
-				this->finDelJuego = true;
-				return 0;
-			}
+			utils::Locker m_lock;
 
 	};
 

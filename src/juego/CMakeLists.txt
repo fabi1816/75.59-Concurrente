@@ -10,6 +10,8 @@ set ( SRCS
 	MesaCompartida.cpp
 	Jugador.cpp
 	Dealer.cpp
+	CardCheckHandler.cpp
+	VictoryHandler.cpp
     )
 
 

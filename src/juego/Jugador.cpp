@@ -5,7 +5,8 @@ namespace game {
 
 
 	Jugador::Jugador(std::shared_ptr<Turno> t, std::shared_ptr<Turno> prox, std::shared_ptr<Saludador> sal)
-		: m_turno(t), m_turnoProximoJugador(prox), m_saludador(sal)
+		: m_turno(t), m_turnoProximoJugador(prox), m_saludador(sal), 
+		m_cardHandler("J_" + std::to_string(getpid()) + ".lock"), m_victoryHandler("V_" + std::to_string(getpid()) + ".lock")
 	{
 		this->m_log = utils::Logger::getLogger();
 
@@ -30,7 +31,7 @@ namespace game {
 			}
 
 			// Chequeo si alguien mas se quedó sin cartas
-			if (this->m_victoryHandler.finDelJuego) {
+			if (this->m_victoryHandler.termino()) {
 				this->m_log->writepid("Perdí!");
 				return 1;
 			}
@@ -50,21 +51,17 @@ namespace game {
 
 
 	bool Jugador::esperarTurno() {
-		// Antes de esperar veo si ya jugaron alguna carta 
-		if (this->m_victoryHandler.finDelJuego) {
-			this->m_log->writepid("No espero mi turno, ya ganó alguien mas");
-			return false;
-		}
+		this->m_log->writepid("Espero mi turno de jugar");
 
-		this->m_log->writepid("[Debug] chequear carta nueva");
-		// Antes de esperar veo si alguien ya ganó
-		if (this->m_cardHandler.nuevaCartaEnLaMesa) {
-			this->m_log->writepid("No espero mi turno, ya hay una carta jugada");
+		// Antes de esperar veo si ya jugaron alguna carta 
+		bool finJuego = this->m_victoryHandler.termino();
+		bool nuevaCarta = this->m_cardHandler.hayCartaEnLaMesa();
+		if (finJuego || nuevaCarta) {
+			this->m_log->writepid("No espero mi turno, hay que actuar!");
 			return false;
 		}
 
 		// No tengo que jugar, sino esperar mi turno
-		this->m_log->writepid("Espero mi turno de jugar");
 		return this->m_turno->wait_p();
 	}
 
@@ -84,11 +81,13 @@ namespace game {
 
 
 	void Jugador::chequearCartas() {
-		this->m_log->writepid("Una carta fue jugada: ", this->m_cardHandler.cartaJugada);
+		int cartaJugada = this->m_cardHandler.getCartaJugada();
+		int cartaAnterior = this->m_cardHandler.getCartaAnterior();
+		this->m_cardHandler.cartaVista();
 
 		// Chequea si necesita saludar
-		this->m_cardHandler.nuevaCartaEnLaMesa = false;
-		char saludo = getSaludo(this->m_cardHandler.cartaJugada, this->m_cardHandler.cartaAnterior);
+		this->m_log->writepid("Una carta fue jugada: ", cartaJugada);
+		char saludo = getSaludo(cartaJugada, cartaAnterior);
 
 		// Saluda
 		this->m_saludador->saludarJugadores(saludo);
