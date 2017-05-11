@@ -33,10 +33,8 @@ namespace game {
 			}
 
 			// Alguien jugó una carta, pude hacer sido yo
-			if (this->m_cardHandler.nuevaCartaEnLaMesa) {
-				this->m_cardHandler.nuevaCartaEnLaMesa = false;
-				chequearCartas();
-			}
+			this->m_cardHandler.nuevaCartaEnLaMesa = false;
+			chequearCartas();
 
 			if (esMiTurno) { // Ya terminó mi turno, paso el turno al proximo jugador
 				pasarTurno();
@@ -80,19 +78,18 @@ namespace game {
 
 		// Chequea si necesita saludar
 		char saludo = getSaludo(this->m_cardHandler.cartaJugada, this->m_cardHandler.cartaAnterior);
-		if (saludo != Saludador::IGNORAR) {
-			this->m_log->writepid("por saludar***********");
-			this->m_saludador->saludarJugadores(saludo);
-			this->m_log->writepid("salude");
 
-			if (saludo == Saludador::ATREVIDO) {
-				ejecutarElAtrevido();
-			}
+		this->m_log->writepid("por saludar***********");
+		this->m_saludador->saludarJugadores(saludo);
+		this->m_log->writepid("salude");
 
-			this->m_log->writepid("por escuchar***********");
-			this->m_saludador->escucharJugadores();
-			this->m_log->writepid("escuche");
+		if (saludo == Saludador::ATREVIDO) {
+			ejecutarElAtrevido();
 		}
+
+		this->m_log->writepid("por escuchar***********");
+		this->m_saludador->escucharJugadores();
+		this->m_log->writepid("escuche");
 	}
 
 
