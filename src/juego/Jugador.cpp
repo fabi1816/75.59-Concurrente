@@ -4,8 +4,8 @@
 namespace game {
 
 
-	Jugador::Jugador(int id, std::shared_ptr<Turno> t, std::shared_ptr<Turno> prox, std::shared_ptr<Saludador> sal)
-		: m_id(id), m_turno(t), m_turnoProximoJugador(prox), m_saludador(sal)
+	Jugador::Jugador(std::shared_ptr<Turno> t, std::shared_ptr<Turno> prox, std::shared_ptr<Saludador> sal)
+		: m_turno(t), m_turnoProximoJugador(prox), m_saludador(sal)
 	{
 		this->m_log = utils::Logger::getLogger();
 
@@ -28,7 +28,7 @@ namespace game {
 
 			// Chequeo si alguien mas se quedó sin cartas
 			if (this->m_victoryHandler.finDelJuego) {
-				this->m_log->write(this->m_id, "Perdí");
+				this->m_log->writepid("Perdí!");
 				return 1;
 			}
 
@@ -51,12 +51,12 @@ namespace game {
 	bool Jugador::esperarTurno() {
 		// Antes de esperar chequeo que no tenga algo que hacer
 		if (this->m_cardHandler.nuevaCartaEnLaMesa || this->m_victoryHandler.finDelJuego) {
-			this->m_log->write(this->m_id, "No espero mi turno, hay que actuar");
+			this->m_log->writepid("No espero mi turno, hay que actuar");
 			return false;
 		}
 
 		// No tengo que jugar, sino esperar mi turno
-		this->m_log->write(this->m_id, "Espero mi turno de jugar");
+		this->m_log->writepid("Espero mi turno de jugar***********");
 		return this->m_turno->wait_p();
 	}
 
@@ -68,8 +68,7 @@ namespace game {
 		// Juega la carta
 		this->m_mesa.JugarCarta(carta);
 
-		this->m_log->write(this->m_id, "Juego una carta:");
-		this->m_log->write(this->m_id, carta);
+		this->m_log->writepid("Juego una carta: ", carta);
 
 		// Aviso a todos que hay una carta nueva en la mesa
 		utils::SignalHandler::getInstance()->sendSignal(0, CardCheckHandler::SIG_CARTA_JUGADA);
@@ -77,18 +76,22 @@ namespace game {
 
 
 	void Jugador::chequearCartas() {
-		this->m_log->write(this->m_id, "Una carta fue jugada:");
-		this->m_log->write(this->m_id, this->m_cardHandler.cartaJugada);
+		this->m_log->writepid("Una carta fue jugada: ", this->m_cardHandler.cartaJugada);
 
 		// Chequea si necesita saludar
 		char saludo = getSaludo(this->m_cardHandler.cartaJugada, this->m_cardHandler.cartaAnterior);
 		if (saludo != Saludador::IGNORAR) {
+			this->m_log->writepid("por saludar***********");
+			this->m_saludador->saludarJugadores(saludo);
+			this->m_log->writepid("salude");
+
 			if (saludo == Saludador::ATREVIDO) {
 				ejecutarElAtrevido();
 			}
 
-			this->m_saludador->saludarJugadores(saludo);
+			this->m_log->writepid("por escuchar***********");
 			this->m_saludador->escucharJugadores();
+			this->m_log->writepid("escuche");
 		}
 	}
 
@@ -97,43 +100,43 @@ namespace game {
 	char Jugador::getSaludo(int carta, int cartaPrev) {
 		switch (carta) {
 			case 7:
-				this->m_log->write(this->m_id, "Atrevido!");
+				this->m_log->writepid("Atrevido!");
 				return Saludador::ATREVIDO;
 
 			case 10:
-				this->m_log->write(this->m_id, "Buenos dias señorita...");
+				this->m_log->writepid("Buenos dias señorita...");
 				return Saludador::BUENOS_DIAS_MISS;
 
 			case 11:
-				this->m_log->write(this->m_id, "Buenas noches caballero.");
+				this->m_log->writepid("Buenas noches caballero.");
 				return Saludador::BUENAS_NOCHES_CABALLERO;
 
 			case 12:
-				this->m_log->write(this->m_id, "( ゜ω゜)ゝ");
+				this->m_log->writepid("( ゜ω゜)ゝ");
 				return Saludador::VENIA;
 
 			default:
 				if (carta == cartaPrev) {
-					this->m_log->write(this->m_id, "Atrevido!");
+					this->m_log->writepid("Atrevido!");
 					return Saludador::ATREVIDO;
 				}
 				break;
 		}
 
 		// No hay que saludar
-		this->m_log->write(this->m_id, "No hay que saludar");
+		this->m_log->writepid("No hay que saludar");
 		return Saludador::IGNORAR;
 	}
 
 	
 	void Jugador::pasarTurno() {
-		this->m_log->write(this->m_id, "Paso el turno al siguiente jugador");
+		this->m_log->writepid("Paso el turno al siguiente jugador");
 		this->m_turnoProximoJugador->signal_v();
 	}
 
 
 	int Jugador::anunciarFinDelJuego() {
-		this->m_log->write(this->m_id, "Gane!!");
+		this->m_log->writepid("Gane!!");
 
 		// Aviso a todos los jugadores que terminó el juego
 		utils::SignalHandler::getInstance()->sendSignal(0, VictoryHandler::SIG_VICTORIA);
@@ -148,7 +151,7 @@ namespace game {
 			return;
 		}
 
-		this->m_log->write(this->m_id, "Fui el ultimo en colocar la mano en la mesa");
+		this->m_log->writepid("Fui el ultimo en colocar la mano en la mesa");
 
 		// Agrego las cartas que levante de la mesa a mi mano
 		std::stack<int> pilaCartas = this->m_mesa.levantarTodasLasCartas();

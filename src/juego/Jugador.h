@@ -22,7 +22,7 @@ namespace game {
 
 		public:
 
-			Jugador(int id, std::shared_ptr<Turno> t, std::shared_ptr<Turno> prox, std::shared_ptr<Saludador> sal);
+			Jugador(std::shared_ptr<Turno> t, std::shared_ptr<Turno> prox, std::shared_ptr<Saludador> sal);
 
 			void setCartas(std::stack<int> cartas);
 
@@ -31,9 +31,6 @@ namespace game {
 			virtual ~Jugador();
 
 		private:
-
-			int m_id;
-
 			std::shared_ptr<utils::Logger> m_log;
 
 			std::shared_ptr<Turno> m_turno;
