@@ -27,7 +27,7 @@ int main(int argc, char* argv[]) {
 	try {
 		auto log = utils::Logger::getLogger();
 
-		std::cout << "Atrevido! v4 - mkVII" << std::endl;
+		std::cout << "== Atrevido! v4 - mkIX ==" << std::endl;
 		log->write("== Atrevido! ==\n");
 
 		// Uses the argument passed the the program or 4 as the default
@@ -69,7 +69,7 @@ int main(int argc, char* argv[]) {
 		signal(game::VictoryHandler::SIG_VICTORIA, SIG_IGN);
 
 		// Señala al primer jugador que comienze el juego
-		std::cout << "Empieza el juego" << std::endl;
+		std::cout << "\n== Empieza el juego ==" << std::endl;
 		log->write("\n== Comienza el juego de Atrevido ==");
 		turnos[0]->signal_v();
 		
@@ -77,34 +77,18 @@ int main(int argc, char* argv[]) {
 		for (int i = 0; i < cantJugadores; ++i) {
 			int stat = 0;
 			int pid = wait(&stat);
-			if (pid == -1) {
-				throw std::system_error(errno, std::generic_category(), "Wait error");
-			}
 
-			// Si un jugador terminó con status 0 fue el ganador
-			if (WIFEXITED(stat) && WEXITSTATUS(stat) == 0) {
-				std::cout << "Ganó el proceso: " << pid << std::endl;
-				log->write("\nTenemos un ganador: ", pid);
-				log->write("\n");
-
-			} else if (WIFSIGNALED(stat)) {
-				log->write("*\n** Termino el proceso: ", pid);
-				log->write("** Por la señal: ", WTERMSIG(stat));
-				
-			} else if (WIFEXITED(stat) && WEXITSTATUS(stat) == 1) {
-				log->write("Perdedor: ", pid);
-
-			} else {
-				log->write("*\n** Algo paso con: ", pid);
-			}
+			std::string msg = utils::waitHandler(pid, stat, game::CardCheckHandler::SIG_CARTA_JUGADA);
+			std::cout << msg << std::endl;
+			log->write(msg);
 		}
 
 		// Destruir semaforos
 		game::SemaforoFactory::destroyTurnos(turnos);
 		game::SemaforoFactory::destroySaludador(saludador);
 
-		std::cout << "Fin del juego" << std::endl;
-		log->write("== Fin del juego de Atrevido ==");
+		std::cout << "\n== Fin del juego ==" << std::endl;
+		log->write("\n== Fin del juego de Atrevido ==");
 
 		return 0;
 
