@@ -77,7 +77,7 @@ namespace game {
 
 
 	void SemaforoFactory::destroySaludador(std::shared_ptr<Saludador> s) {
-		int res = semctl(s->getSemId(), 0, IPC_RMID);
+		int res = semctl(s->getShmId(), 0, IPC_RMID);
 		utils::checkError(res, "Falló la destruccion de los semaforos");
 
 		// Si nadie lo tiene attachado destruye la memoria compartida
