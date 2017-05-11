@@ -54,7 +54,7 @@ namespace game {
 		}
 
 		// No tengo que jugar, sino esperar mi turno
-		this->m_log->writepid("Espero mi turno de jugar***********");
+		this->m_log->writepid("Espero mi turno de jugar");
 		return this->m_turno->wait_p();
 	}
 
@@ -79,17 +79,13 @@ namespace game {
 		// Chequea si necesita saludar
 		char saludo = getSaludo(this->m_cardHandler.cartaJugada, this->m_cardHandler.cartaAnterior);
 
-		this->m_log->writepid("por saludar***********");
 		this->m_saludador->saludarJugadores(saludo);
-		this->m_log->writepid("salude");
 
 		if (saludo == Saludador::ATREVIDO) {
 			ejecutarElAtrevido();
 		}
 
-		this->m_log->writepid("por escuchar***********");
 		this->m_saludador->escucharJugadores();
-		this->m_log->writepid("escuche");
 	}
 
 
