@@ -14,7 +14,7 @@ namespace game {
 	// Para que los jugadores indiquen que estan listos a comenzar
 	class Disparador : public BaseSemaforo {
 		public:
-			Disparador(int semID);
+			explicit Disparador(int semID);
 
 
 			void listo();

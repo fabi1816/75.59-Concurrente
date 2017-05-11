@@ -11,7 +11,7 @@ namespace game {
 
 	class BaseSemaforo {
 		public:
-			BaseSemaforo(int semID);
+			explicit BaseSemaforo(int semID);
 
 			int getSemId() const;
 
