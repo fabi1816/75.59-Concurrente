@@ -12,7 +12,7 @@ namespace utils {
 
 	class SharedCounter {
 		public:
-			SharedCounter(char uid);
+			explicit SharedCounter(char uid);
 			virtual ~SharedCounter();
 
 			// Operaciones sobre el contador

@@ -4,7 +4,7 @@
 namespace utils {
 
 	SyncBarrier::SyncBarrier(char uid, int cantProc, int semID)
-		: m_cantProcesos(cantProc), m_lock(uid, "barrier"), m_contador(uid)
+		: m_semaforoID(semID), m_cantProcesos(cantProc), m_lock(uid, "barrier"), m_contador(uid)
 	{
 		// Setea los valores iniciales de los semaforos
 		int resA = setSemaphoreValue(semID, 0, 0);
@@ -12,8 +12,6 @@ namespace utils {
 
 		int resB = setSemaphoreValue(semID, 1, 1);
 		utils::checkError(resB, "Falló la inicializacion del segundo semaforo");
-
-		this->m_semaforoID = semID;
 	}
 
 	
