@@ -3,7 +3,6 @@
 
 #include <sys/types.h>
 #include <sys/ipc.h>
-#include <sys/sem.h>
 #include <sys/shm.h>
 
 #include <string>
@@ -21,9 +20,6 @@ namespace utils {
 
 			void enterBarrier();
 			void exitBarrier();
-
-			static int createSemaphoreSet(char uid, int cant);
-			static void destroySamaphoreSet(int semID);
 
 		private:
 			int m_semaforoID;

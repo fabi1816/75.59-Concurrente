@@ -15,27 +15,6 @@ namespace utils {
 	}
 
 
-	//---------------------------------------------------------------------
-
-	
-	int SyncBarrier::createSemaphoreSet(char uid, int cant) {
-		key_t k= ftok("/bin/ls", uid);
-		utils::checkError(k, "Falló la creación de la clave de las barreras");
-
-		int semID = semget(k, cant, IPC_CREAT | 0644);
-		utils::checkError(semID, "Falló la creación de los semaforos");
-
-		return semID;
-	}
-
-
-	void SyncBarrier::destroySamaphoreSet(int semID) {
-		int res = semctl(semID, 0, IPC_RMID);
-		utils::checkError(res, "Falló la destruccion de la barrera");
-	}
-
-
-	//---------------------------------------------------------------------
 
 	
 	int SyncBarrier::setSemaphoreValue(int semID, int semPos, int val) {

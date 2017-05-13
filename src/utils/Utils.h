@@ -3,6 +3,8 @@
 
 
 #include <sys/types.h>
+#include <sys/ipc.h>
+#include <sys/sem.h>
 #include <sys/wait.h>
 
 #include <string>
@@ -21,6 +23,12 @@ namespace utils {
 
 	// Checks errors when waiting for processes and returns messages
 	std::string waitHandler(int pid, int stat, int slowSignal);
+
+	// Creates a semaphore set
+	int createSemaphoreSet(char uid, int cant);
+
+	// Destroys a semaphore set
+	void destroySamaphoreSet(int semID);
 
 }
 
