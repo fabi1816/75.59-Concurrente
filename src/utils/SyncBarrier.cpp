@@ -14,6 +14,9 @@ namespace utils {
 		utils::checkError(resB, "Falló la inicializacion del segundo semaforo");
 	}
 
+
+	//---------------------------------------------------------------------
+
 	
 	int SyncBarrier::createSemaphoreSet(char uid, int cant) {
 		key_t k= ftok("/bin/ls", uid);
@@ -25,10 +28,14 @@ namespace utils {
 		return semID;
 	}
 
+
 	void SyncBarrier::destroySamaphoreSet(int semID) {
 		int res = semctl(semID, 0, IPC_RMID);
 		utils::checkError(res, "Falló la destruccion de la barrera");
 	}
+
+
+	//---------------------------------------------------------------------
 
 	
 	int SyncBarrier::setSemaphoreValue(int semID, int semPos, int val) {
@@ -45,12 +52,48 @@ namespace utils {
 
 
 	void SyncBarrier::enterBarrier() {
-		// TODO: Implemetar
+		this->m_lock.tomarLockExclusivo();
+		this->m_contador.sumar();
+		if (this->m_contador.getValor() == this->m_cantProcesos) {
+			sembuf sops[2];
+			sops[0] = getSignalOp(1, -1);	// Cierra la 2da barrera
+			sops[1] = getSignalOp(0, 1);	// Abre la 1er barrera
+
+			int res = semop(this->m_semaforoID, sops, 2);
+			utils::checkError(res, "Error al entrar en la barrera");
+		}
+		this->m_lock.liberarLockExclusivo();
+
+		// 1er barrera esperar y activar
+		sembuf sops[2];
+		sops[0] = getSignalOp(0, -1);	// Wait
+		sops[1] = getSignalOp(0, 1);	// Signal
+
+		int res = semop(this->m_semaforoID, sops, 2);
+		utils::checkError(res, "Error al esperar en la primer barrera");
 	}
 
 
 	void SyncBarrier::exitBarrier() {
-		// TODO: Implemetar
+		this->m_lock.tomarLockExclusivo();
+		this->m_contador.restar();
+		if (this->m_contador.getValor() == 0) {
+			sembuf sops[2];
+			sops[0] = getSignalOp(0, -1);	// Cierra la 1er barrera
+			sops[1] = getSignalOp(1, 1);	// Abre la 2da barrera
+
+			int res = semop(this->m_semaforoID, sops, 2);
+			utils::checkError(res, "Error al salir de la barrera");
+		}
+		this->m_lock.liberarLockExclusivo();
+
+		// 2da barrera esperar y activar
+		sembuf sops[2];
+		sops[0] = getSignalOp(1, -1);	// Wait
+		sops[1] = getSignalOp(1, 1);	// Signal
+
+		int res = semop(this->m_semaforoID, sops, 2);
+		utils::checkError(res, "Error al esperar en la segunda barrera");
 	}
 
 
