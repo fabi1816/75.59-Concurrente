@@ -2,6 +2,7 @@
 #La lista de clases en el directorio actual
 set ( SRCS 
 	SignalHandler.cpp
+	SharedCounter.cpp
 	Utils.cpp
 	Locker.cpp
 	Logger.cpp
