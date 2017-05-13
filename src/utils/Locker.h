@@ -14,6 +14,7 @@ namespace utils {
 	class Locker {
 		public:
 			explicit Locker(std::string lockFile);
+			Locker(char uid, std::string discriminator);
 
 			void tomarLockExclusivo();
 			void liberarLockExclusivo();
@@ -35,6 +36,8 @@ namespace utils {
 
 			void aplicarLock(int fd, flock fl);
 			void quitarLock(int fd, flock fl);
+
+			flock newEmptyFlock() const;
 	};
 
 }

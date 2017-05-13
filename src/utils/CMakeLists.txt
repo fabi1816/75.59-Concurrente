@@ -3,6 +3,7 @@
 set ( SRCS 
 	SignalHandler.cpp
 	SharedCounter.cpp
+	SyncBarrier.cpp
 	Utils.cpp
 	Locker.cpp
 	Logger.cpp

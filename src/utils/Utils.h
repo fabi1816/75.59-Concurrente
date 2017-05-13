@@ -17,6 +17,7 @@ namespace utils {
 
 	// Checks for errors in system calls
 	void checkError(int result, std::string errMsg);
+	void checkErrorWithInteruption(int result, std::string errMsg);
 
 	// Checks errors when waiting for processes and returns messages
 	std::string waitHandler(int pid, int stat, int slowSignal);

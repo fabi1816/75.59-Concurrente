@@ -4,23 +4,26 @@
 namespace utils {
 
 	Locker::Locker(std::string lockFile) : m_fileName(lockFile), m_fileDescriptor(0) {
-		flock lockExc;
-		flock lockCom;
+		this->m_lockExclusivo = newEmptyFlock();
+		this->m_lockCompartido = newEmptyFlock();
+	}
 
-		lockExc.l_whence = SEEK_SET;
-		lockCom.l_whence = SEEK_SET;
 
-		lockExc.l_start = 0;
-		lockCom.l_start = 0;
+	Locker::Locker(char uid, std::string discriminator) : m_fileDescriptor(0) {
+		this->m_fileName = discriminator + "_" + std::to_string(uid) + ".lock";
+		this->m_lockExclusivo = newEmptyFlock();
+		this->m_lockCompartido = newEmptyFlock();
+	}
 
-		lockExc.l_len = 0;
-		lockCom.l_len = 0;
 
-		lockExc.l_pid = 0;
-		lockCom.l_pid = 0;
+	flock Locker::newEmptyFlock() const {
+		flock fl;
+		fl.l_whence = SEEK_SET;
+		fl.l_start = 0;
+		fl.l_len = 0;
+		fl.l_pid = 0;
 
-		this->m_lockExclusivo = lockExc;
-		this->m_lockCompartido = lockCom;
+		return fl;
 	}
 
 
