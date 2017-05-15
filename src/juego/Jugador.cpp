@@ -4,51 +4,53 @@
 namespace game {
 
 
-	Jugador::Jugador(std::shared_ptr<Turno> t, std::shared_ptr<Turno> prox, std::shared_ptr<Saludador> sal)
-		: m_turno(t), m_turnoProximoJugador(prox), m_saludador(sal)
-	{
+	Jugador::Jugador(int idJugador, int cantJugadores, std::vector<int> semIDs, std::string keyCode)
+	       	: m_idJugador(idJugador), 
+		m_jugarCarta(keyCode[0], cantJugadores, semIDs[0]),
+		m_chequearCarta(keyCode[1], cantJugadores, semIDs[1]),
+		m_saludarJugadores(keyCode[2], cantJugadores, semIDs[2]),
+		m_chequearTurno(keyCode[3], cantJugadores, semIDs[3]),
+		m_chequearFin(keyCode[4], cantJugadores, semIDs[4])
+       	{
 		this->m_log = utils::Logger::getLogger();
-
-		utils::SignalHandler::getInstance()->registrarHandler(CardCheckHandler::SIG_CARTA_JUGADA , &this->m_cardHandler);
-		utils::SignalHandler::getInstance()->registrarHandler(VictoryHandler::SIG_VICTORIA , &this->m_victoryHandler);
 	}
 
 
-	void Jugador::setCartas(std::stack<int> cartas) {
+	int Jugador::jugar(std::stack<int> cartas) {
 		this->m_cartas = cartas;
+
+		bool finDelJuego = false;
+
+		do {
+			this->m_jugarCarta.enterBarrier();
+			// Fase 1: Jugar carta, si corresponde al jugador
+			this->m_jugarCarta.exitBarrier();
+
+			this->m_chequearCarta.enterBarrier();
+			// Fase 2: Leer la carta que fué jugada en la mesa
+			this->m_chequearCarta.exitBarrier();
+
+			this->m_saludarJugadores.enterBarrier();
+			// Fase 3a: Saludar
+			// Fase 3b: Poner la mano en la mesa
+			// Fase 3c: Levantar las cartas de la mesa
+			// Fase 3d: Escuchar todos los saludos
+			this->m_saludarJugadores.exitBarrier();
+
+			this->m_chequearTurno.enterBarrier();
+			// Fase 4: Chequear si el jugador ganó, avisar al siguente jugador que puede jugar una carta
+			this->m_chequearTurno.exitBarrier();
+
+			this->m_chequearFin.enterBarrier();
+			// Fase 5: Chequear si alguien ganó
+			this->m_chequearFin.exitBarrier();
+
+		} while (!finDelJuego);
+
+		return 0;
 	}
 
-
-	int Jugador::jugar(Disparador disp) {
-		// El jugador esta listo para comenzar
-		disp.listo();
-
-		while (!this->m_cartas.empty()) {
-			bool esMiTurno = esperarTurno();
-			if (esMiTurno) {
-				jugarCarta();
-			}
-
-			// Chequeo si alguien mas se quedó sin cartas
-			if (this->m_victoryHandler.finDelJuego) {
-				this->m_log->writepid("Perdí!");
-				return 1;
-			}
-
-			// Alguien jugó una carta, pude hacer sido yo
-			chequearCartas();
-
-			if (esMiTurno && !this->m_cartas.empty()) {
-				// Ya terminó mi turno, paso el turno al proximo jugador
-				pasarTurno();
-			}
-		}
-
-		// Gané
-		return anunciarFinDelJuego();
-	}
-
-
+/*
 	bool Jugador::esperarTurno() {
 		// Antes de esperar veo si ya jugaron alguna carta 
 		if (this->m_victoryHandler.finDelJuego) {
@@ -162,12 +164,5 @@ namespace game {
 		std::stack<int> pilaCartas = this->m_mesa.levantarTodasLasCartas();
 		this->m_cartas = Dealer::mergeAndShuffle(this->m_cartas, pilaCartas);
 	}
-
-
-	Jugador::~Jugador() {
-		utils::SignalHandler::getInstance()->removerHandler(CardCheckHandler::SIG_CARTA_JUGADA);
-		utils::SignalHandler::getInstance()->removerHandler(VictoryHandler::SIG_VICTORIA);
-		utils::SignalHandler::destruir();
-	}
-
+	*/
 }

@@ -2,19 +2,16 @@
 #define JUGADOR_H_
 
 #include <stack>
+#include <string>
+#include <vector>
 #include <memory>
 
 #include "Logger.h"
 
-#include "Turno.h"
 #include "Dealer.h"
-#include "Saludador.h"
-#include "Disparador.h"
 #include "MesaCompartida.h"
+#include "SyncBarrier.h"
 
-#include "SignalHandler.h"
-#include "VictoryHandler.h"
-#include "CardCheckHandler.h"
 
 
 namespace game {
@@ -22,40 +19,24 @@ namespace game {
 	class Jugador {
 
 		public:
+			Jugador(int idJugador, int cantJugadores, std::vector<int> semIDs, std::string keyCode);
+			virtual ~Jugador() = default;
 
-			Jugador(std::shared_ptr<Turno> t, std::shared_ptr<Turno> prox, std::shared_ptr<Saludador> sal);
-
-			void setCartas(std::stack<int> cartas);
-
-			int jugar(Disparador disp);
-
-			virtual ~Jugador();
+			int jugar(std::stack<int> cartas);
 
 		private:
-			std::shared_ptr<utils::Logger> m_log;
-
-			std::shared_ptr<Turno> m_turno;
-			std::shared_ptr<Turno> m_turnoProximoJugador;
-
-			std::shared_ptr<Saludador> m_saludador;
-
-			CardCheckHandler m_cardHandler;
-			VictoryHandler m_victoryHandler;
-
-			std::stack<int> m_cartas;
+			const int m_idJugador;
 
 			MesaCompartida m_mesa;
+			std::stack<int> m_cartas;
 
-			bool esperarTurno();
-			void pasarTurno();
+			utils::SyncBarrier m_jugarCarta;
+			utils::SyncBarrier m_chequearCarta;
+			utils::SyncBarrier m_saludarJugadores;	// TODO: Encapsular
+			utils::SyncBarrier m_chequearTurno;
+			utils::SyncBarrier m_chequearFin;
 
-			void jugarCarta();
-			void chequearCartas();
-
-			char getSaludo(int carta, int cartaPrev);
-			void ejecutarElAtrevido();
-
-			int anunciarFinDelJuego();
+			std::shared_ptr<utils::Logger> m_log;
 
 	};
 

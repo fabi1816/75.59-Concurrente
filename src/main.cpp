@@ -13,22 +13,14 @@
 
 #include "Jugador.h"
 #include "Dealer.h"
-#include "Turno.h"
-#include "Saludador.h"
-#include "Disparador.h"
 #include "MesaCompartida.h"
-#include "SemaforoFactory.h"
-
-#include "VictoryHandler.h"
-#include "CardCheckHandler.h"
-
 
 
 int main(int argc, char* argv[]) {
 	try {
 		auto log = utils::Logger::getLogger();
 
-		std::cout << "== Atrevido! v4 - mkX ==" << std::endl;
+		std::cout << "== Atrevido! v5 - mkI ==" << std::endl;
 		log->write("== Atrevido! ==\n");
 
 		// Uses the argument passed the the program or 4 as the default
@@ -41,59 +33,52 @@ int main(int argc, char* argv[]) {
 		game::MesaCompartida mesa;
 		mesa.initMesa(cantJugadores);
 
+		// Crea los semaforos para las fases de los jugadores
+		std::vector<int> semIDs;
+		semIDs.push_back(utils::createSemaphoreSet('U', 2));
+		semIDs.push_back(utils::createSemaphoreSet('N', 2));
+		semIDs.push_back(utils::createSemaphoreSet('D', 2));
+		semIDs.push_back(utils::createSemaphoreSet('E', 2));
+		semIDs.push_back(utils::createSemaphoreSet('R', 2));
+
 		// Repartir las cartas a los jugadores
 		std::vector< std::stack<int> > cartas = game::Dealer::getPilas(cantJugadores);
-
-		// Crear turnos para los jugadores
-		auto turnos = game::SemaforoFactory::buildTurnos(cantJugadores);
-
-		// El saludador de los jugadores
-		std::shared_ptr<game::Saludador> saludador = game::SemaforoFactory::buildSaludador(cantJugadores);
-
-		// Avisa cuando esta listo el jugador
-		game::Disparador trigger = game::SemaforoFactory::buildDisparador(cantJugadores);
 
 		// Crear un proceso para cada jugador
 		for (int i = 0; i < cantJugadores; ++i) {
 			pid_t pid = fork();
 			if (pid == 0) {
-				int prox = (i+1) % cantJugadores;
+				game::Jugador j(getpid(), cantJugadores, semIDs, "UNDER");
 
-				game::Jugador j(turnos[i], turnos[prox], saludador);
-				j.setCartas(cartas[i]);
-
-				return j.jugar(trigger);
+				return j.jugar(cartas[i]);
 			}
 
 			log->write("Jugador => ", pid);
 		}
 
-		// Ignoro las señales de chequeo de cartas/victorias
-		signal(game::CardCheckHandler::SIG_CARTA_JUGADA, SIG_IGN);
-		signal(game::VictoryHandler::SIG_VICTORIA, SIG_IGN);
-
-		// Se espera a que todos los jugadores esten listos
-		trigger.esperarATodos();
-
-		// Señala al primer jugador que comienze el juego
+		// TODO: Señala al primer jugador que comienze el juego
 		std::cout << "\n== Empieza el juego ==" << std::endl;
 		log->write("\n== Comienza el juego de Atrevido ==");
-		turnos[0]->signal_v();
 		
 		// Se esperan que terminen todos los jugadores
 		for (int i = 0; i < cantJugadores; ++i) {
 			int stat = 0;
 			int pid = wait(&stat);
+			if (pid == -1) {	// Ocurrió un error inesperado
+				throw std::system_error(errno, std::generic_category(), "Wait error");
+			}
 
-			std::string msg = utils::waitHandler(pid, stat, game::CardCheckHandler::SIG_CARTA_JUGADA);
-			std::cout << msg << std::endl;
-			log->write(msg);
+			if (!WIFEXITED(stat)) {
+				log->write("*\n** Error no contemplado");
+			}
 		}
 
 		// Destruir semaforos
-		game::SemaforoFactory::destroyDisparador(trigger);
-		game::SemaforoFactory::destroySaludador(saludador);
-		game::SemaforoFactory::destroyTurnos(turnos);
+		utils::destroySamaphoreSet(semIDs[0]);
+		utils::destroySamaphoreSet(semIDs[1]);
+		utils::destroySamaphoreSet(semIDs[2]);
+		utils::destroySamaphoreSet(semIDs[3]);
+		utils::destroySamaphoreSet(semIDs[4]);
 
 		std::cout << "\n== Fin del juego ==" << std::endl;
 		log->write("\n== Fin del juego de Atrevido ==");

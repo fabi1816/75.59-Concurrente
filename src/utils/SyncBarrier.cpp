@@ -15,8 +15,6 @@ namespace utils {
 	}
 
 
-
-	
 	int SyncBarrier::setSemaphoreValue(int semID, int semPos, int val) {
 		union semun {
 			int val;
