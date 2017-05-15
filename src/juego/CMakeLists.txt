@@ -9,6 +9,7 @@ set ( SRCS
 	Jugador.cpp
 	Dealer.cpp
 	Marcador.cpp
+	MarcadorCompartido.cpp
     )
 
 

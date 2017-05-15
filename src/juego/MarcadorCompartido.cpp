@@ -1,15 +1,15 @@
-#include "MesaCompartida.h"
+#include "MarcadorCompartido.h"
 
 
 namespace game {
 
-	MesaCompartida::MesaCompartida() : m_lock("mesa_comp.lock") {
+	MarcadorCompartido::MarcadorCompartido() : m_lock("marcador.lock") {
 		// Generación de la clave
-		key_t clave = ftok("/bin/ls", 'M');
+		key_t clave = ftok("/bin/cat", 'Q');
 		utils::checkError(clave, "Falló la creación de la key");
 
 		// Crea la memoria compartida
-		int shmId = shmget(clave, sizeof(Mesa), 0644 | IPC_CREAT);
+		int shmId = shmget(clave, sizeof(Marcador), 0644 | IPC_CREAT);
 		utils::checkError(shmId, "Falló la creación de la memoria compartida");
 
 		// Atacha el bloque de memoria al espacio de direcciones del proceso
@@ -20,13 +20,13 @@ namespace game {
 
 		// Transforma lo almacenado en la memoria en un mesa
 		this->m_shmID = shmId;
-		this->m_mesa = static_cast<Mesa*>(ptrTemporal);
+		this->m_ptrMarcador = static_cast<Marcador*>(ptrTemporal);
 	}
 
-	
-	MesaCompartida::~MesaCompartida() {
+
+	MarcadorCompartido::~MarcadorCompartido() {
 		//Detach del bloque de memoria
-		int res = shmdt(static_cast<void*>(this->m_mesa));
+		int res = shmdt(static_cast<void*>(this->m_ptrMarcador));
 		utils::checkError(res, "No se pudo desatachar");
 
 		int procAdosados = this->getNumeroDeJugadoresJugando();
@@ -37,57 +37,55 @@ namespace game {
 	}
 
 
-	void MesaCompartida::initMesa(int cantJugadores) {
+	void MarcadorCompartido::init(int cantJugadores, std::vector<int> idJugadores) {
 		this->m_lock.tomarLockExclusivo();
-		this->m_mesa->initMesa(cantJugadores);
+		this->m_ptrMarcador->init(cantJugadores, idJugadores);
 		this->m_lock.liberarLockExclusivo();
 	}
 
 
-	void MesaCompartida::JugarCarta(int carta) {
+	void MarcadorCompartido::finJuego(int idGanador) {
 		this->m_lock.tomarLockExclusivo();
-		this->m_mesa->JugarCarta(carta);
+		this->m_ptrMarcador->finJuego(idGanador);
 		this->m_lock.liberarLockExclusivo();
 	}
 
 
-	int MesaCompartida::verUltimaCarta() {
+	bool MarcadorCompartido::hayGanador() {
 		this->m_lock.tomarLockCompartido();
-		int carta = this->m_mesa->verUltimaCarta();
+		bool res = this->m_ptrMarcador->hayGanador();
 		this->m_lock.liberarLockCompartido();
-
-		return carta;
-	}
-
-
-	int MesaCompartida::verAnteUltimaCarta() {
-		this->m_lock.tomarLockCompartido();
-		int carta = this->m_mesa->verAnteUltimaCarta();
-		this->m_lock.liberarLockCompartido();
-
-		return carta;
-	}
-
-	
-	bool MesaCompartida::colocarMano() {
-		this->m_lock.tomarLockExclusivo();
-		bool res = this->m_mesa->colocarMano();
-		this->m_lock.liberarLockExclusivo();
 
 		return res;
 	}
 
-	
-	std::stack<int> MesaCompartida::levantarTodasLasCartas() {
-		this->m_lock.tomarLockExclusivo();
-		std::stack<int> pila = this->m_mesa->levantarTodasLasCartas();
-		this->m_lock.liberarLockExclusivo();
 
-		return pila;
+	int MarcadorCompartido::getIdGanador() {
+		this->m_lock.tomarLockCompartido();
+		int id = this->m_ptrMarcador->getIdGanador();
+		this->m_lock.liberarLockCompartido();
+
+		return id;
 	}
 
 
-	int MesaCompartida::getNumeroDeJugadoresJugando() {
+	void MarcadorCompartido::finDeTurno(int idJugador) {
+		this->m_lock.tomarLockExclusivo();
+		this->m_ptrMarcador->finDeTurno(idJugador);
+		this->m_lock.liberarLockExclusivo();
+	}
+
+
+	int MarcadorCompartido::getIdProximoJugador() {
+		this->m_lock.tomarLockCompartido();
+		int id = this->m_ptrMarcador->getIdProximoJugador();
+		this->m_lock.liberarLockCompartido();
+
+		return id;
+	}
+
+
+	int MarcadorCompartido::getNumeroDeJugadoresJugando() {
 		shmid_ds estado;
 		shmctl(this->m_shmID, IPC_STAT, &estado);
 
