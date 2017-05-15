@@ -9,8 +9,10 @@
 #include "Logger.h"
 
 #include "Dealer.h"
-#include "MesaCompartida.h"
+#include "Saludador.h"
 #include "SyncBarrier.h"
+#include "MesaCompartida.h"
+#include "MarcadorCompartido.h"
 
 
 
@@ -28,6 +30,8 @@ namespace game {
 			const int m_idJugador;
 
 			MesaCompartida m_mesa;
+			MarcadorCompartido m_marcador;
+
 			std::stack<int> m_cartas;
 
 			utils::SyncBarrier m_jugarCarta;
@@ -38,6 +42,7 @@ namespace game {
 
 			std::shared_ptr<utils::Logger> m_log;
 
+			char getSaludo(int carta, int cartaPrev);
 	};
 
 }

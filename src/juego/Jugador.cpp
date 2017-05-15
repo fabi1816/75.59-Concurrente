@@ -24,82 +24,60 @@ namespace game {
 		do {
 			this->m_jugarCarta.enterBarrier();
 			// Fase 1: Jugar carta, si corresponde al jugador
+			int prox = this->m_marcador.getIdProximoJugador();
+			if (prox == this->m_idJugador) {
+				int carta = this->m_cartas.top();
+				this->m_cartas.pop();
+
+				this->m_mesa.JugarCarta(carta);	// Juega la carta
+			}
 			this->m_jugarCarta.exitBarrier();
+
+			//-----------------------
 
 			this->m_chequearCarta.enterBarrier();
 			// Fase 2: Leer la carta que fué jugada en la mesa
+			int cartaJugada = this->m_mesa.verUltimaCarta();
+			int cartaAnterior = this->m_mesa.verAnteUltimaCarta();
 			this->m_chequearCarta.exitBarrier();
+
+			//-----------------------
 
 			this->m_saludarJugadores.enterBarrier();
 			// Fase 3a: Saludar
+			char saludo = getSaludo(cartaJugada, cartaAnterior);
 			// Fase 3b: Poner la mano en la mesa
-			// Fase 3c: Levantar las cartas de la mesa
+			if (saludo == Saludador::ATREVIDO) {
+				bool fuiUltimo = this->m_mesa.colocarMano();
+				if (fuiUltimo) {
+					// Fase 3c: Levantar las cartas de la mesa
+					std::stack<int> pilaCartas = this->m_mesa.levantarTodasLasCartas();
+					this->m_cartas = Dealer::mergeAndShuffle(this->m_cartas, pilaCartas);
+				}
+			}
 			// Fase 3d: Escuchar todos los saludos
 			this->m_saludarJugadores.exitBarrier();
 
+			//-----------------------
+
 			this->m_chequearTurno.enterBarrier();
 			// Fase 4: Chequear si el jugador ganó, avisar al siguente jugador que puede jugar una carta
+			if (this->m_cartas.empty()) {
+				this->m_marcador.finJuego(this->m_idJugador);
+			}
+			this->m_marcador.finDeTurno(this->m_idJugador);
 			this->m_chequearTurno.exitBarrier();
+
+			//-----------------------
 
 			this->m_chequearFin.enterBarrier();
 			// Fase 5: Chequear si alguien ganó
+			finDelJuego = this->m_marcador.hayGanador();
 			this->m_chequearFin.exitBarrier();
 
 		} while (!finDelJuego);
 
 		return 0;
-	}
-
-/*
-	bool Jugador::esperarTurno() {
-		// Antes de esperar veo si ya jugaron alguna carta 
-		if (this->m_victoryHandler.finDelJuego) {
-			this->m_log->writepid("No espero mi turno, ya ganó alguien mas");
-			return false;
-		}
-
-		this->m_log->writepid("[Debug] chequear carta nueva");
-		// Antes de esperar veo si alguien ya ganó
-		if (this->m_cardHandler.nuevaCartaEnLaMesa) {
-			this->m_log->writepid("No espero mi turno, ya hay una carta jugada");
-			return false;
-		}
-
-		// No tengo que jugar, sino esperar mi turno
-		this->m_log->writepid("Espero mi turno de jugar");
-		return this->m_turno->wait_p();
-	}
-
-
-	void Jugador::jugarCarta() {
-		int carta = this->m_cartas.top();
-		this->m_cartas.pop();
-
-		// Juega la carta
-		this->m_mesa.JugarCarta(carta);
-
-		this->m_log->writepid("Juego una carta: ", carta);
-
-		// Aviso a todos que hay una carta nueva en la mesa
-		utils::SignalHandler::getInstance()->sendSignal(0, CardCheckHandler::SIG_CARTA_JUGADA);
-	}
-
-
-	void Jugador::chequearCartas() {
-		this->m_log->writepid("Una carta fue jugada: ", this->m_cardHandler.cartaJugada);
-
-		// Chequea si necesita saludar
-		this->m_cardHandler.nuevaCartaEnLaMesa = false;
-		char saludo = getSaludo(this->m_cardHandler.cartaJugada, this->m_cardHandler.cartaAnterior);
-
-		// Saluda
-		this->m_saludador->saludarJugadores(saludo);
-
-		if (saludo == Saludador::ATREVIDO) {
-			ejecutarElAtrevido();
-		}
-
-		this->m_saludador->escucharJugadores();
 	}
 
 
@@ -135,34 +113,4 @@ namespace game {
 		return Saludador::IGNORAR;
 	}
 
-	
-	void Jugador::pasarTurno() {
-		this->m_log->writepid("Paso el turno al siguiente jugador");
-		this->m_turnoProximoJugador->signal_v();
-	}
-
-
-	int Jugador::anunciarFinDelJuego() {
-		this->m_log->writepid("Gane!!");
-
-		// Aviso a todos los jugadores que terminó el juego
-		utils::SignalHandler::getInstance()->sendSignal(0, VictoryHandler::SIG_VICTORIA);
-
-		return 0;
-	}
-
-
-	void Jugador::ejecutarElAtrevido() {
-		bool fuiUltimo = this->m_mesa.colocarMano();
-		if (!fuiUltimo) {
-			return;
-		}
-
-		this->m_log->writepid("Fui el ultimo en colocar la mano en la mesa");
-
-		// Agrego las cartas que levante de la mesa a mi mano
-		std::stack<int> pilaCartas = this->m_mesa.levantarTodasLasCartas();
-		this->m_cartas = Dealer::mergeAndShuffle(this->m_cartas, pilaCartas);
-	}
-	*/
 }

@@ -10,10 +10,14 @@
 #include <system_error>
 
 #include "Logger.h"
+#include "Dealer.h"
+#include "SemaforoFactory.h"
 
 #include "Jugador.h"
-#include "Dealer.h"
+#include "Disparador.h"
 #include "MesaCompartida.h"
+#include "MarcadorCompartido.h"
+
 
 
 int main(int argc, char* argv[]) {
@@ -43,6 +47,10 @@ int main(int argc, char* argv[]) {
 
 		// Repartir las cartas a los jugadores
 		std::vector< std::stack<int> > cartas = game::Dealer::getPilas(cantJugadores);
+		std::vector<int> pids;
+
+		// Se crea un semaforo para señalar el inicio del juego
+		game::Disparador trigger = game::SemaforoFactory::buildDisparador(cantJugadores);
 
 		// Crear un proceso para cada jugador
 		for (int i = 0; i < cantJugadores; ++i) {
@@ -50,15 +58,23 @@ int main(int argc, char* argv[]) {
 			if (pid == 0) {
 				game::Jugador j(getpid(), cantJugadores, semIDs, "UNDER");
 
+				trigger.listo();
+
 				return j.jugar(cartas[i]);
 			}
 
+			pids.push_back(pid);
 			log->write("Jugador => ", pid);
 		}
 
-		// TODO: Señala al primer jugador que comienze el juego
+		// Ahora que tenemos los pids de todos los jugadores podemos inicializar el marcador
+		game::MarcadorCompartido marcador;
+		marcador.init(cantJugadores, pids);
+
+		// Señala al primer jugador que comienze el juego
 		std::cout << "\n== Empieza el juego ==" << std::endl;
 		log->write("\n== Comienza el juego de Atrevido ==");
+		trigger.esperarATodos();
 		
 		// Se esperan que terminen todos los jugadores
 		for (int i = 0; i < cantJugadores; ++i) {
@@ -79,6 +95,7 @@ int main(int argc, char* argv[]) {
 		utils::destroySamaphoreSet(semIDs[2]);
 		utils::destroySamaphoreSet(semIDs[3]);
 		utils::destroySamaphoreSet(semIDs[4]);
+		game::SemaforoFactory::destroyDisparador(trigger);
 
 		std::cout << "\n== Fin del juego ==" << std::endl;
 		log->write("\n== Fin del juego de Atrevido ==");
