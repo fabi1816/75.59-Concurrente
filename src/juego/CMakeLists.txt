@@ -10,8 +10,6 @@ set ( SRCS
 	Mesa.cpp
 	MesaCompartida.cpp
 	Saludador.cpp
-	SemaforoFactory.cpp
-	Turno.cpp
     )
 
 

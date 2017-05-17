@@ -11,7 +11,6 @@
 
 #include "Logger.h"
 #include "Dealer.h"
-#include "SemaforoFactory.h"
 
 #include "Jugador.h"
 #include "Disparador.h"
@@ -50,7 +49,7 @@ int main(int argc, char* argv[]) {
 		std::vector<int> pids;
 
 		// Se crea un semaforo para señalar el inicio del juego
-		game::Disparador trigger = game::SemaforoFactory::buildDisparador(cantJugadores);
+		game::Disparador trigger = game::Disparador::build(cantJugadores, 'Z');
 
 		// Crear un proceso para cada jugador
 		for (int i = 0; i < cantJugadores; ++i) {
@@ -95,7 +94,7 @@ int main(int argc, char* argv[]) {
 		utils::destroySamaphoreSet(semIDs[2]);
 		utils::destroySamaphoreSet(semIDs[3]);
 		utils::destroySamaphoreSet(semIDs[4]);
-		game::SemaforoFactory::destroyDisparador(trigger);
+		game::Disparador::destroy(trigger);
 
 		std::cout << "\n== Fin del juego ==" << std::endl;
 		log->write("\n== Fin del juego de Atrevido ==");
