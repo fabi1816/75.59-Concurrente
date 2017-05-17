@@ -18,67 +18,90 @@ namespace game {
 
 	int Jugador::jugar(std::stack<int> cartas) {
 		this->m_cartas = cartas;
-
 		bool finDelJuego = false;
 
 		do {
+			// Fase 1: Jugar carta
 			this->m_jugarCarta.enterBarrier();
-			// Fase 1: Jugar carta, si corresponde al jugador
-			int prox = this->m_marcador.getIdProximoJugador();
-			if (prox == this->m_idJugador) {
-				int carta = this->m_cartas.top();
-				this->m_cartas.pop();
-
-				this->m_mesa.JugarCarta(carta);	// Juega la carta
-				std::string texto = "Se jugo un " + std::to_string(carta) + " por el jugdor:" ;
-				this->m_log->write(texto ,this->m_idJugador);
-			}
+			jugarCarta();
 			this->m_jugarCarta.exitBarrier();
 
-			//-----------------------
-
+			// Fase 2: Leer la carta que fué jugada
 			this->m_chequearCarta.enterBarrier();
-			// Fase 2: Leer la carta que fué jugada en la mesa
 			int cartaJugada = this->m_mesa.verUltimaCarta();
 			int cartaAnterior = this->m_mesa.verAnteUltimaCarta();
+			this->m_log->writepid("En la mesa está la carta " + std::to_string(cartaJugada));
 			this->m_chequearCarta.exitBarrier();
 
-			//-----------------------
-
+			// Fase 3: Saludar y escuchar
 			this->m_saludador.saludarJugadores(cartaJugada, cartaAnterior);
-			// Fase 3a: Saludar
-			// Fase 3b: Poner la mano en la mesa
-			if (this->m_saludador.griteAtrevido()) {
-				bool fuiUltimo = this->m_mesa.colocarMano();
-				if (fuiUltimo) {
-					// Fase 3c: Levantar las cartas de la mesa
-					std::stack<int> pilaCartas = this->m_mesa.levantarTodasLasCartas();
-					this->m_cartas = Dealer::mergeAndShuffle(this->m_cartas, pilaCartas);
-				}
-			}
-			// Fase 3d: Escuchar todos los saludos
+			ejecutarAtrevido();
 			this->m_saludador.escucharJugadores();
 
-			//-----------------------
-
+			// Fase 4: Finalizar el turno
 			this->m_chequearTurno.enterBarrier();
-			// Fase 4: Chequear si el jugador ganó, avisar al siguente jugador que puede jugar una carta
-			if (this->m_cartas.empty()) {
-				this->m_marcador.finJuego(this->m_idJugador);
-			}
-			this->m_marcador.finDeTurno(this->m_idJugador);
+			finalizarTurno();
 			this->m_chequearTurno.exitBarrier();
 
 			//-----------------------
 
+			// Fase 5: Chequear fin de juego
 			this->m_chequearFin.enterBarrier();
-			// Fase 5: Chequear si alguien ganó
 			finDelJuego = this->m_marcador.hayGanador();
 			this->m_chequearFin.exitBarrier();
 
 		} while (!finDelJuego);
 
 		return 0;
+	}
+
+
+	void Jugador::ejecutarAtrevido() {
+		if (!this->m_saludador.griteAtrevido()) {
+			return;
+		}
+
+		// Poner la mano en la mesa
+		bool fuiUltimo = this->m_mesa.colocarMano();
+		if (fuiUltimo) {
+			// Levantar las cartas de la mesa
+			std::stack<int> pilaCartas = this->m_mesa.levantarTodasLasCartas();
+			int cant = pilaCartas.size();
+			this->m_cartas = Dealer::mergeAndShuffle(this->m_cartas, pilaCartas);
+
+			this->m_log->writepid("Perdí el atrevido y levanté " + std::to_string(cant) + " cartas");
+		}
+	}
+
+	
+	void Jugador::jugarCarta() {
+		// Si no soy yo, no hago nada
+		int prox = this->m_marcador.getIdProximoJugador();
+		if (prox != this->m_idJugador) {
+			return;
+		}
+
+		// Tomo la carta de mi mazo
+		int carta = this->m_cartas.top();
+		this->m_cartas.pop();
+
+		// Coloca la carta de mi mazo en la mesa
+		this->m_mesa.JugarCarta(carta);
+		this->m_log->writepid("Jugé la carta " + std::to_string(carta));
+	}
+
+
+	void Jugador::finalizarTurno() {
+		// Si me quedé sin cartas gané
+		if (this->m_cartas.empty()) {
+			this->m_marcador.finJuego(this->m_idJugador);
+			this->m_log->writepid("Me quedé sin cartas, gané!");
+
+		} else {
+			// Indico que terminó mi turno de jugar
+			this->m_marcador.finDeTurno(this->m_idJugador);
+			this->m_log->writepid("Paso el turno al proximo jugador");
+		}
 	}
 
 }

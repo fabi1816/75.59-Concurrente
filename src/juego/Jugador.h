@@ -15,7 +15,6 @@
 #include "MarcadorCompartido.h"
 
 
-
 namespace game {
 
 	class Jugador {
@@ -40,6 +39,11 @@ namespace game {
 			utils::SyncBarrier m_chequearFin;
 
 			std::shared_ptr<utils::Logger> m_log;
+
+
+			void jugarCarta();
+			void ejecutarAtrevido();
+			void finalizarTurno();
 	};
 
 }
