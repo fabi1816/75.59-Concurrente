@@ -7,21 +7,25 @@
 
 namespace utils {
 
-    Fifo::Fifo(const std::string nombre):nombre(nombre),fd(-1) {
+    Fifo::Fifo(const std::string nombre):nombre(nombre),fd(-1),m_lock(nombre) {
           //Crea el FIFO
+
           int fifoCreateStatus = mknod (static_cast <const char *>(nombre.c_str()), S_IFIFO |0666, 0);
           if (fifoCreateStatus == -1){
               checkErrors(fifoCreateStatus,"Falló la creacion del fifo");
           }
           else {
-              //Abro el archivo,en forma no bloqueante.
-              this->fd = open (nombre.c_str(),O_NONBLOCK);
+              //Abro el archivo,en forma  bloqueante para la lecutra y escritura.
+              this->fd = open (nombre.c_str(),O_RDWR);
           }
         }
 
 
-    ssize_t  Fifo:: leer ( void * buffer , const ssize_t buffsize ) const {
-          return read(this->fd, buffer, buffsize);
+    ssize_t  Fifo::leer ( void * buffer , const ssize_t buffsize ) {
+          this->m_lock.tomarLockExclusivo();
+          ssize_t cr = read(this->fd, buffer, buffsize);
+          this->m_lock.liberarLockExclusivo();
+          return cr;
     }
 
     void Fifo::checkErrors(int result, std::string msg) const {
@@ -31,7 +35,10 @@ namespace utils {
     }
 
     ssize_t Fifo::escribir (const void* buffer,const ssize_t buffsize) {
-          return write(this->fd, buffer, buffsize);
+          this->m_lock.tomarLockExclusivo();
+          ssize_t code = write(this->fd, buffer, buffsize);
+          this->m_lock.liberarLockExclusivo();
+          return code;
     }
 
     Fifo ::~ Fifo() {
