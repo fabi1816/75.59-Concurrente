@@ -20,11 +20,9 @@ namespace utils {
 
 			// Only writes the given text
 			void write(std::string txt);
-			void write(std::string txt, int i);
 
 			// Writes the pid plus any given data
 			void writepid(std::string txt);
-			void writepid(std::string txt, int i);
 
 
 			virtual ~Logger() = default;
