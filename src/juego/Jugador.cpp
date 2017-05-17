@@ -30,6 +30,8 @@ namespace game {
 				this->m_cartas.pop();
 
 				this->m_mesa.JugarCarta(carta);	// Juega la carta
+				std::string texto = "Se jugo un " + std::to_string(carta) + " por el jugdor:" ;
+				this->m_log->write(texto ,this->m_idJugador);
 			}
 			this->m_jugarCarta.exitBarrier();
 
