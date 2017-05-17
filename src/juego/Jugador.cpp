@@ -81,6 +81,4 @@ namespace game {
 		return 0;
 	}
 
-
-
 }
