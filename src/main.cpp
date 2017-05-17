@@ -24,7 +24,7 @@ int main(int argc, char* argv[]) {
 	try {
 		auto log = utils::Logger::getLogger();
 
-		std::cout << "== Atrevido! v5 - mkI ==" << std::endl;
+		std::cout << "== Atrevido! v5 - mkII ==" << std::endl;
 		log->write("== Atrevido! ==\n");
 
 		// Uses the argument passed the the program or 4 as the default
