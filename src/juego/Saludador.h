@@ -25,7 +25,13 @@ namespace game {
 			void escucharJugadores();
 
 		private:
-			bool m_griteAtrevido;
+			const std::string NADA = "nada";
+			const std::string VENIA = "( ゜ω゜)ゝ";
+			const std::string ATREVIDO = "Atrevido!";
+			const std::string BUENOS_DIAS = "Buenos dias señorita...";
+			const std::string BUENAS_NOCHES = "Buenas noches caballero.";
+
+			std::string m_saludo;
 			std::shared_ptr<utils::Logger> m_log;
 
 			void enterBarrier();
