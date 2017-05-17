@@ -19,6 +19,7 @@ namespace game {
 	int Jugador::jugar(std::stack<int> cartas) {
 		this->m_cartas = cartas;
 		bool finDelJuego = false;
+		bool ganeElJuego = false;
 
 		do {
 			// Fase 1: Jugar carta
@@ -40,7 +41,7 @@ namespace game {
 
 			// Fase 4: Finalizar el turno
 			this->m_chequearTurno.enterBarrier();
-			finalizarTurno();
+			ganeElJuego = finalizarTurno();
 			this->m_chequearTurno.exitBarrier();
 
 			//-----------------------
@@ -52,7 +53,8 @@ namespace game {
 
 		} while (!finDelJuego);
 
-		return 0;
+		// Si gané devuelve 0, si no 1
+		return ganeElJuego ? 0 : 1;
 	}
 
 
@@ -91,7 +93,8 @@ namespace game {
 	}
 
 
-	void Jugador::finalizarTurno() {
+	// Devuelve true si me quedé sin cartas
+	bool Jugador::finalizarTurno() {
 		// Si me quedé sin cartas gané
 		if (this->m_cartas.empty()) {
 			this->m_marcador.finJuego(this->m_idJugador);
@@ -102,6 +105,10 @@ namespace game {
 			this->m_marcador.finDeTurno(this->m_idJugador);
 			this->m_log->writepid("Paso el turno al proximo jugador");
 		}
+
+		return this->m_cartas.empty();
 	}
+
+
 
 }

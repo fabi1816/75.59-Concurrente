@@ -22,6 +22,7 @@ namespace game {
 			Jugador(int idJugador, int cantJugadores, std::vector<int> semIDs, std::string keyCode);
 			virtual ~Jugador() = default;
 
+			// Juega el juego, devuelve "0" si es el ganador, "1" si perdió
 			int jugar(std::stack<int> cartas);
 
 		private:
@@ -43,7 +44,7 @@ namespace game {
 
 			void jugarCarta();
 			void ejecutarAtrevido();
-			void finalizarTurno();
+			bool finalizarTurno();
 	};
 
 }

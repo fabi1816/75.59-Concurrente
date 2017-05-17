@@ -23,14 +23,14 @@ int main(int argc, char* argv[]) {
 	try {
 		auto log = utils::Logger::getLogger();
 
-		std::cout << "== Atrevido! v5 - mkII ==" << std::endl;
+		std::cout << "== Atrevido! v5 - mkIII ==" << std::endl;
 		log->write("== Atrevido! ==\n");
 
 		// Uses the argument passed the the program or 4 as the default
 		int cantJugadores = (argc > 1) ? atoi(argv[1]) : 4;
 
 		std::cout << "Cantidad de jugadores: " << cantJugadores << std::endl;
-		log->write("Cantidad de jugadores: ", cantJugadores);
+		log->write("Cantidad de jugadores: " + std::to_string(cantJugadores));
 
 		// Se crea la mesa donde jugar
 		game::MesaCompartida mesa;
@@ -57,23 +57,23 @@ int main(int argc, char* argv[]) {
 			if (pid == 0) {
 				game::Jugador j(getpid(), cantJugadores, semIDs, "UNDER");
 
+				log->write("Jugador => " + std::to_string(getpid()) + " listo!");
 				trigger.listo();
 
 				return j.jugar(cartas[i]);
 			}
 
 			pids.push_back(pid);
-			log->write("Jugador => ", pid);
 		}
 
 		// Ahora que tenemos los pids de todos los jugadores podemos inicializar el marcador
 		game::MarcadorCompartido marcador;
 		marcador.init(cantJugadores, pids);
 
-		// Señala al primer jugador que comienze el juego
+		// Cuando todos los jugadores esten listos empieza el juego
+		trigger.esperarATodos();
 		std::cout << "\n== Empieza el juego ==" << std::endl;
 		log->write("\n== Comienza el juego de Atrevido ==");
-		trigger.esperarATodos();
 		
 		// Se esperan que terminen todos los jugadores
 		for (int i = 0; i < cantJugadores; ++i) {
@@ -83,7 +83,15 @@ int main(int argc, char* argv[]) {
 				throw std::system_error(errno, std::generic_category(), "Wait error");
 			}
 
-			if (!WIFEXITED(stat)) {
+			if (WIFEXITED(stat) && WEXITSTATUS(stat) == 0) {
+				std::cout << "\nGANADOR: " << pid << "\n" << std::endl;
+				log->write("\nGANADOR: " + std::to_string(pid) + "\n");
+
+			} else if (WIFEXITED(stat) && WEXITSTATUS(stat) == 1) {
+				std::cout << "Perdedor: " << pid << std::endl;
+				log->write("Perdedor: " + std::to_string(pid));
+
+			} else if (!WIFEXITED(stat)) {
 				log->write("*\n** Error no contemplado");
 			}
 		}
