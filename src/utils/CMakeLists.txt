@@ -6,6 +6,7 @@ set ( SRCS
 	Utils.cpp
 	Locker.cpp
 	Logger.cpp
+	Fifo.cpp
     )
 
 

@@ -49,6 +49,7 @@ namespace game {
 			// Fase 5: Chequear fin de juego
 			this->m_chequearFin.enterBarrier();
 			finDelJuego = this->m_marcador.hayGanador();
+			// TODO: Arbitro
 			this->m_chequearFin.exitBarrier();
 
 		} while (!finDelJuego);
