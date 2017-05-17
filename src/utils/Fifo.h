@@ -28,6 +28,8 @@ canal . escribir ( static_cast < const void * >( dato . c_str () ) , dato . size
 #include <sys/stat.h>
 #include <fcntl.h>
 #include <unistd.h>
+#include "Locker.h"
+#include "Utils.h"
 
 namespace utils {
 
@@ -42,7 +44,7 @@ namespace utils {
              ~ Fifo();
 
             //Lee el FIFO en un buffer de N bytes.
-            ssize_t leer (void * buffer , const ssize_t buffsize) const ;
+            ssize_t leer (void * buffer , const ssize_t buffsize);
 
             //Escribir en el FIFO en un buffer de N bytes.
             ssize_t escribir (const void * buffer , const ssize_t buffsize);
@@ -54,6 +56,7 @@ namespace utils {
         private :
             std::string nombre;
             int fd = 0;
+            utils::Locker m_lock;
         };
 }
 #endif //FIFO_H
