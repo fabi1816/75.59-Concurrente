@@ -19,7 +19,6 @@
 namespace game {
 
 	class Jugador {
-
 		public:
 			Jugador(int idJugador, int cantJugadores, std::vector<int> semIDs, std::string keyCode);
 			virtual ~Jugador() = default;
@@ -36,13 +35,11 @@ namespace game {
 
 			utils::SyncBarrier m_jugarCarta;
 			utils::SyncBarrier m_chequearCarta;
-			utils::SyncBarrier m_saludarJugadores;	// TODO: Encapsular
+			Saludador m_saludador;
 			utils::SyncBarrier m_chequearTurno;
 			utils::SyncBarrier m_chequearFin;
 
 			std::shared_ptr<utils::Logger> m_log;
-
-			char getSaludo(int carta, int cartaPrev);
 	};
 
 }

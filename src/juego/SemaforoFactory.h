@@ -5,35 +5,20 @@
 #include <sys/ipc.h>
 #include <sys/sem.h>
 
-#include <memory>
-#include <vector>
-#include <string>
-
 #include "Utils.h"
-#include "Turno.h"
-#include "Saludador.h"
 #include "Disparador.h"
 
 
 namespace game {
 
 	class SemaforoFactory {
-
 		public:
-
-			static std::vector< std::shared_ptr<Turno> > buildTurnos(int cant);
-			static void destroyTurnos(std::vector< std::shared_ptr<Turno> > turnos);
-
-			static std::shared_ptr<Saludador> buildSaludador(int cantJugadores);
-			static void destroySaludador(std::shared_ptr<Saludador> s);
-
 			static Disparador buildDisparador(int cantJugadores);
 			static void destroyDisparador(Disparador d);
 
 
 		private:
-
-			SemaforoFactory() = default;
+			SemaforoFactory() = delete;
 
 			// Declaro el union para toda la clase
 			typedef union {

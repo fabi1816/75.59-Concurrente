@@ -8,7 +8,7 @@ namespace game {
 	       	: m_idJugador(idJugador), 
 		m_jugarCarta(keyCode[0], cantJugadores, semIDs[0]),
 		m_chequearCarta(keyCode[1], cantJugadores, semIDs[1]),
-		m_saludarJugadores(keyCode[2], cantJugadores, semIDs[2]),
+		m_saludador(keyCode[2], cantJugadores, semIDs[2]),
 		m_chequearTurno(keyCode[3], cantJugadores, semIDs[3]),
 		m_chequearFin(keyCode[4], cantJugadores, semIDs[4])
        	{
@@ -43,11 +43,10 @@ namespace game {
 
 			//-----------------------
 
-			this->m_saludarJugadores.enterBarrier();
+			this->m_saludador.saludarJugadores(cartaJugada, cartaAnterior);
 			// Fase 3a: Saludar
-			char saludo = getSaludo(cartaJugada, cartaAnterior);
 			// Fase 3b: Poner la mano en la mesa
-			if (saludo == Saludador::ATREVIDO) {
+			if (this->m_saludador.griteAtrevido()) {
 				bool fuiUltimo = this->m_mesa.colocarMano();
 				if (fuiUltimo) {
 					// Fase 3c: Levantar las cartas de la mesa
@@ -56,7 +55,7 @@ namespace game {
 				}
 			}
 			// Fase 3d: Escuchar todos los saludos
-			this->m_saludarJugadores.exitBarrier();
+			this->m_saludador.escucharJugadores();
 
 			//-----------------------
 
@@ -81,36 +80,5 @@ namespace game {
 	}
 
 
-	// Devuelve el saludo según las cartas jugadas
-	char Jugador::getSaludo(int carta, int cartaPrev) {
-		switch (carta) {
-			case 7:
-				this->m_log->writepid("Atrevido!");
-				return Saludador::ATREVIDO;
-
-			case 10:
-				this->m_log->writepid("Buenos dias señorita...");
-				return Saludador::BUENOS_DIAS_MISS;
-
-			case 11:
-				this->m_log->writepid("Buenas noches caballero.");
-				return Saludador::BUENAS_NOCHES_CABALLERO;
-
-			case 12:
-				this->m_log->writepid("( ゜ω゜)ゝ");
-				return Saludador::VENIA;
-
-			default:
-				if (carta == cartaPrev) {
-					this->m_log->writepid("Atrevido!");
-					return Saludador::ATREVIDO;
-				}
-				break;
-		}
-
-		// No hay que saludar
-		this->m_log->writepid("No hay que saludar");
-		return Saludador::IGNORAR;
-	}
 
 }
