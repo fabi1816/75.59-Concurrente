@@ -105,7 +105,7 @@ namespace game {
 			this->m_marcador.finJuego(this->m_idJugador);
 			this->m_log->writepid("Me quedé sin cartas, gané!");
 
-		} else {
+		} else if (this->m_marcador.getIdProximoJugador() == this->m_idJugador) {
 			// Indico que terminó mi turno de jugar
 			this->m_marcador.finDeTurno(this->m_idJugador);
 			this->m_log->writepid("Paso el turno al proximo jugador");
