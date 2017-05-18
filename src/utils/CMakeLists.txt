@@ -7,6 +7,7 @@ set ( SRCS
 	Locker.cpp
 	Logger.cpp
 	Fifo.cpp
+	CanalCartas.cpp
     )
 
 
