@@ -16,10 +16,12 @@ namespace game {
 	}
 
 
-	int Jugador::jugar(std::stack<int> cartas) {
+	int Jugador::jugar(std::stack<int> cartas, std::string nombreCanal) {
 		this->m_cartas = cartas;
+
 		bool finDelJuego = false;
 		bool ganeElJuego = false;
+		utils::CanalCartas canal(nombreCanal);
 
 		do {
 			// Fase 1: Jugar carta
@@ -44,13 +46,15 @@ namespace game {
 			ganeElJuego = finalizarTurno();
 			this->m_chequearTurno.exitBarrier();
 
-			//-----------------------
-
 			// Fase 5: Chequear fin de juego
 			this->m_chequearFin.enterBarrier();
 			finDelJuego = this->m_marcador.hayGanador();
-			// TODO: Arbitro
 			this->m_chequearFin.exitBarrier();
+
+			//-----------------------
+
+			// Que el arbitro vea las cartas
+			canal.mostrar(this->m_idJugador, this->m_cartas);
 
 		} while (!finDelJuego);
 

@@ -10,6 +10,7 @@
 
 #include "Dealer.h"
 #include "Saludador.h"
+#include "CanalCartas.h"
 #include "SyncBarrier.h"
 #include "MesaCompartida.h"
 #include "MarcadorCompartido.h"
@@ -23,7 +24,7 @@ namespace game {
 			virtual ~Jugador() = default;
 
 			// Juega el juego, devuelve "0" si es el ganador, "1" si perdió
-			int jugar(std::stack<int> cartas);
+			int jugar(std::stack<int> cartas, std::string nombreCanal);
 
 		private:
 			const int m_idJugador;
