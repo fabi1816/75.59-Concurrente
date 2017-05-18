@@ -98,10 +98,11 @@ namespace utils {
 
 	Locker::~Locker() {
 		// TODO: Por ahora no borramos el archivo de lock
-		//std::string fullFileName = "/tmp/" + this->m_fileName;
-		//int res = unlink(fullFileName.c_str());
-		//checkError(res, "Error al eliminar archivo de lock");
-		
+		/*
+		std::string fullFileName = "/tmp/" + this->m_fileName;
+		int res = unlink(fullFileName.c_str());
+		checkError(res, "Error al eliminar archivo de lock");
+		*/
 		this->m_fileDescriptor = 0;
 		this->m_fileName = "";
 	}
