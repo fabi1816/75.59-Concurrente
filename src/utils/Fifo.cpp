@@ -7,45 +7,38 @@
 
 namespace utils {
 
-    Fifo::Fifo(const std::string nombre):nombre(nombre),fd(-1),m_lock(nombre) {
-          //Crea el FIFO
-
-          int fifoCreateStatus = mknod (static_cast <const char *>(nombre.c_str()), S_IFIFO |0666, 0);
-          if (fifoCreateStatus == -1){
-              checkErrors(fifoCreateStatus,"Falló la creacion del fifo");
-          }
-          else {
-              //Abro el archivo,en forma  bloqueante para la lecutra y escritura.
-              this->fd = open (nombre.c_str(),O_RDWR);
-          }
-        }
+	Fifo::Fifo(const std::string nombre) : nombre(nombre), 
+		m_lockEsc("o" + nombre + ".lock"), 
+		m_lockLec("i" + nombre + ".lock")
+       	{
+		//Abro el archivo,en forma bloqueante para la lecutra y escritura.
+		int fdResult = open(nombre.c_str(), O_RDWR);
+		utils::checkError(fdResult, "Error al abrir el Fifo");
+		this->fd = fdResult;
+	}
 
 
-    ssize_t  Fifo::leer ( void * buffer , const ssize_t buffsize ) {
-          this->m_lock.tomarLockExclusivo();
-          ssize_t cr = read(this->fd, buffer, buffsize);
-          this->m_lock.liberarLockExclusivo();
-          return cr;
-    }
+	ssize_t Fifo::leer (void* buffer, const ssize_t buffsize ) {
+		this->m_lockLec.tomarLockExclusivo();
+		ssize_t cr = read(this->fd, buffer, buffsize);
+		this->m_lockLec.liberarLockExclusivo();
 
-    void Fifo::checkErrors(int result, std::string msg) const {
-         if (result == -1) {
-            throw std::system_error(errno, std::generic_category(),msg);
-         }
-    }
+		return cr;
+	}
 
-    ssize_t Fifo::escribir (const void* buffer,const ssize_t buffsize) {
-          this->m_lock.tomarLockExclusivo();
-          ssize_t code = write(this->fd, buffer, buffsize);
-          this->m_lock.liberarLockExclusivo();
-          return code;
-    }
 
-    Fifo ::~ Fifo() {
-        //Cierra el archivo
-        close (fd) ;
-        fd = -1;
-        //Destruye el FIFO (Deslinkea el archivo de nuestra estructura).
-        unlink (nombre.c_str()) ;
-    }
+	ssize_t Fifo::escribir (const void* buffer,const ssize_t buffsize) {
+		this->m_lockEsc.tomarLockExclusivo();
+		ssize_t code = write(this->fd, buffer, buffsize);
+		this->m_lockEsc.liberarLockExclusivo();
+
+		return code;
+	}
+
+
+	Fifo::~Fifo() {
+		//Cierra el archivo
+		close(fd) ;
+		fd = -1;
+	}
 }

@@ -20,43 +20,39 @@ canal . escribir ( static_cast < const void * >( dato . c_str () ) , dato . size
 #ifndef FIFO_H
 #define FIFO_H
 
-#include <string>
-#include <cerrno>
-#include <stdexcept>
-#include <system_error>
-#include <sys/types.h>
-#include <sys/stat.h>
 #include <fcntl.h>
 #include <unistd.h>
+#include <sys/stat.h>
+#include <sys/types.h>
+
+#include <string>
+
 #include "Locker.h"
 #include "Utils.h"
 
+
 namespace utils {
 
-        class Fifo {
+	class Fifo {
+		public:
+			//Construye  la estrucutra FIFO
+			explicit Fifo(const std::string);
 
+			//Cierra el archivo y deslinkea el FIFO de la estructura
+			virtual ~Fifo();
 
-        public :
-            //Construye  la estrucutra FIFO
-            Fifo(const std::string);
+			//Lee el FIFO en un buffer de N bytes.
+			ssize_t leer (void * buffer , const ssize_t buffsize);
 
-            //Cierra el archivo y deslinkea el FIFO de la estructura
-             ~ Fifo();
+			//Escribir en el FIFO en un buffer de N bytes.
+			ssize_t escribir (const void * buffer , const ssize_t buffsize);
 
-            //Lee el FIFO en un buffer de N bytes.
-            ssize_t leer (void * buffer , const ssize_t buffsize);
+		private:
+			int fd;
+			std::string nombre;
 
-            //Escribir en el FIFO en un buffer de N bytes.
-            ssize_t escribir (const void * buffer , const ssize_t buffsize);
-
-            //Errores en el FIFO
-            void checkErrors(int,std::string) const;
-
-
-        private :
-            std::string nombre;
-            int fd = 0;
-            utils::Locker m_lock;
-        };
+			utils::Locker m_lockEsc;
+			utils::Locker m_lockLec;
+	};
 }
 #endif //FIFO_H
