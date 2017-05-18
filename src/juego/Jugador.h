@@ -43,9 +43,9 @@ namespace game {
 			std::shared_ptr<utils::Logger> m_log;
 
 
-			void jugarCarta();
+			bool jugarCarta();
 			void ejecutarAtrevido();
-			bool finalizarTurno();
+			bool finalizarTurno(bool esMiTurno);
 	};
 
 }
