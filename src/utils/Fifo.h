@@ -35,6 +35,9 @@ namespace utils {
 
 	class Fifo {
 		public:
+			static void createFifoNode(std::string name);
+			static void destroyFifoNode(std::string name);
+
 			//Construye  la estrucutra FIFO
 			explicit Fifo(const std::string);
 

@@ -41,4 +41,21 @@ namespace utils {
 		close(fd) ;
 		fd = -1;
 	}
+
+
+	//---------------------------------------------------------------------
+
+
+	void Fifo::createFifoNode(std::string name) {
+		int stat = mknod(name.c_str(), S_IFIFO | 0666, 0);
+		utils::checkError(stat, "Error al crear el Fifo");
+	}
+
+
+	void Fifo::destroyFifoNode(std::string name) {
+		int res = unlink(name.c_str());
+		utils::checkError(res, "Error al destruir el Fifo");
+	}
+
+
 }
