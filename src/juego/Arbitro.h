@@ -14,7 +14,7 @@ namespace game {
 
 	class Arbitro {
 		public:
-			Arbitro(std::string nombreFifo);
+			explicit Arbitro(std::string nombreFifo);
 			virtual ~Arbitro() = default;
 
 			int espiarJuego();
