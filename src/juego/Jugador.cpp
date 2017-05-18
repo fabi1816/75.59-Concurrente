@@ -26,7 +26,7 @@ namespace game {
 		do {
 			// Fase 1: Jugar carta
 			this->m_jugarCarta.enterBarrier();
-			jugarCarta();
+			bool esMiTurno = jugarCarta();
 			this->m_jugarCarta.exitBarrier();
 
 			// Fase 2: Leer la carta que fué jugada
@@ -43,7 +43,7 @@ namespace game {
 
 			// Fase 4: Finalizar el turno
 			this->m_chequearTurno.enterBarrier();
-			ganeElJuego = finalizarTurno();
+			ganeElJuego = finalizarTurno(esMiTurno);
 			this->m_chequearTurno.exitBarrier();
 
 			// Fase 5: Chequear fin de juego
@@ -81,11 +81,11 @@ namespace game {
 	}
 
 	
-	void Jugador::jugarCarta() {
+	bool Jugador::jugarCarta() {
 		// Si no soy yo, no hago nada
 		int prox = this->m_marcador.getIdProximoJugador();
 		if (prox != this->m_idJugador) {
-			return;
+			return false;
 		}
 
 		// Tomo la carta de mi mazo
@@ -95,17 +95,19 @@ namespace game {
 		// Coloca la carta de mi mazo en la mesa
 		this->m_mesa.JugarCarta(carta);
 		this->m_log->writepid("Jugé la carta " + std::to_string(carta));
+		
+		return true;
 	}
 
 
 	// Devuelve true si me quedé sin cartas
-	bool Jugador::finalizarTurno() {
+	bool Jugador::finalizarTurno(bool esMiTurno) {
 		// Si me quedé sin cartas gané
 		if (this->m_cartas.empty()) {
 			this->m_marcador.finJuego(this->m_idJugador);
 			this->m_log->writepid("Me quedé sin cartas, gané!");
 
-		} else if (this->m_marcador.getIdProximoJugador() == this->m_idJugador) {
+		} else if (esMiTurno) {
 			// Indico que terminó mi turno de jugar
 			this->m_marcador.finDeTurno(this->m_idJugador);
 			this->m_log->writepid("Paso el turno al proximo jugador");
