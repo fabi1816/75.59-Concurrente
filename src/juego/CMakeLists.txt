@@ -10,6 +10,7 @@ set ( SRCS
 	Mesa.cpp
 	MesaCompartida.cpp
 	Saludador.cpp
+	Arbitro.cpp
     )
 
 

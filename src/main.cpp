@@ -12,18 +12,18 @@
 #include "Logger.h"
 #include "Dealer.h"
 
+#include "Arbitro.h"
 #include "Jugador.h"
 #include "Disparador.h"
 #include "MesaCompartida.h"
 #include "MarcadorCompartido.h"
 
 
-
 int main(int argc, char* argv[]) {
 	try {
 		auto log = utils::Logger::getLogger();
 
-		std::cout << "== Atrevido! v5 - mkIII ==" << std::endl;
+		std::cout << "== Atrevido! v5 - mkIV ==" << std::endl;
 		log->write("== Atrevido! ==\n");
 
 		// Uses the argument passed the the program or 4 as the default
@@ -44,12 +44,18 @@ int main(int argc, char* argv[]) {
 		semIDs.push_back(utils::createSemaphoreSet('E', 2));
 		semIDs.push_back(utils::createSemaphoreSet('R', 2));
 
+		// Crear el canal que usa el arbitro
+		const std::string nombreCanal = "arbitro.fifo";
+		utils::Fifo::createFifoNode(nombreCanal);
+
 		// Repartir las cartas a los jugadores
 		std::vector< std::stack<int> > cartas = game::Dealer::getPilas(cantJugadores);
 		std::vector<int> pids;
 
 		// Se crea un semaforo para señalar el inicio del juego
-		game::Disparador trigger = game::Disparador::build(cantJugadores, 'Z');
+		game::Disparador trigger = game::Disparador::build(cantJugadores +1, 'Z');
+
+		//------------------------- Procesos --------------------------
 
 		// Crear un proceso para cada jugador
 		for (int i = 0; i < cantJugadores; ++i) {
@@ -60,11 +66,23 @@ int main(int argc, char* argv[]) {
 				log->write("Jugador => " + std::to_string(getpid()) + " listo!");
 				trigger.listo();
 
-				return j.jugar(cartas[i]);
+				return j.jugar(cartas[i], nombreCanal);
 			}
 
 			pids.push_back(pid);
 		}
+
+		// Crea un proceso para el arbitro 
+		if (0 == fork()) {
+			game::Arbitro arb(nombreCanal);
+
+			log->write("Arbitro => " + std::to_string(getpid()) + " listo!");
+			trigger.listo();
+
+			return arb.espiarJuego();
+		}
+
+		//-------------------------------------------------------------
 
 		// Ahora que tenemos los pids de todos los jugadores podemos inicializar el marcador
 		game::MarcadorCompartido marcador;
@@ -75,8 +93,8 @@ int main(int argc, char* argv[]) {
 		std::cout << "\n== Empieza el juego ==" << std::endl;
 		log->write("\n== Comienza el juego de Atrevido ==");
 		
-		// Se esperan que terminen todos los jugadores
-		for (int i = 0; i < cantJugadores; ++i) {
+		// Se esperan que terminen todos los jugadores y el arbitro
+		for (int i = 0; i < cantJugadores +1; ++i) {
 			int stat = 0;
 			int pid = wait(&stat);
 			if (pid == -1) {	// Ocurrió un error inesperado
@@ -88,8 +106,10 @@ int main(int argc, char* argv[]) {
 				log->write("\nGANADOR: " + std::to_string(pid) + "\n");
 
 			} else if (WIFEXITED(stat) && WEXITSTATUS(stat) == 1) {
-				std::cout << "Perdedor: " << pid << std::endl;
 				log->write("Perdedor: " + std::to_string(pid));
+
+			} else if (WIFEXITED(stat) && WEXITSTATUS(stat) == -1) {
+				log->write("El arbitro finalizó su trabajo");
 
 			} else if (!WIFEXITED(stat)) {
 				log->write("*\n** Error no contemplado");
@@ -103,6 +123,9 @@ int main(int argc, char* argv[]) {
 		utils::destroySamaphoreSet(semIDs[3]);
 		utils::destroySamaphoreSet(semIDs[4]);
 		game::Disparador::destroy(trigger);
+
+		// Destruir el canal que usa el arbitro
+		utils::Fifo::destroyFifoNode(nombreCanal);
 
 		std::cout << "\n== Fin del juego ==" << std::endl;
 		log->write("\n== Fin del juego de Atrevido ==");
