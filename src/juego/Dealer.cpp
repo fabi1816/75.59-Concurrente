@@ -48,12 +48,14 @@ namespace game {
 		std::vector<int> v;
 
 		// Move the items into a vector
-		for (unsigned i = 0; i < a.size(); ++i) {
+		int tamA = a.size();
+		for (int i = 0; i < tamA; ++i) {
 			v.push_back(a.top());
 			a.pop();
 		}
 
-		for (unsigned i = 0; i < b.size(); ++i) {
+		int tamB = b.size();
+		for (int i = 0; i < tamB; ++i) {
 			v.push_back(b.top());
 			b.pop();
 		}
