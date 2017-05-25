@@ -8,6 +8,10 @@ set ( SRCS
 	Logger.cpp
 	Fifo.cpp
 	CanalCartas.cpp
+	Cliente.cpp
+	Mensajes.h
+	Cola.h
+	Servidor.cpp
     )
 
 
