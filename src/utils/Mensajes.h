@@ -3,13 +3,20 @@
 
 #define	PETICION	1
 #define	RESPUESTA	2
-#define TEXTO_SIZE	255
+#define ESTADO_DE_TRANSACCION 20
+#define NOMBRE_SIZE	61
+#define DIRECCION_SIZE 120
+#define TELEFONO_SIZE 13
 
 
 typedef struct mensaje {
 	long mtype;
+
 	int id;
-	char texto[TEXTO_SIZE];
+	char estadoDeTransaccion[ESTADO_DE_TRANSACCION];
+	char nombre[NOMBRE_SIZE];
+	char direccion [DIRECCION_SIZE];
+	char telefono [TELEFONO_SIZE];
 } mensaje;
 
 #endif /* MENSAJES_H_ */
