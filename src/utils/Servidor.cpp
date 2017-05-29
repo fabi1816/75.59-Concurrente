@@ -16,11 +16,14 @@ int Servidor :: recibirPeticion () {
 
 int Servidor :: procesarPeticion () {
 	std::stringstream textoRta;
-	textoRta << "[Respuesta a " << this->peticionRecibida.texto << "]";
+	//TODO FOR ME refactorizar "MENSAJE"
+	textoRta << "[Respuesta a " << this->peticionRecibida.estadoDeTransaccion << "]";
 
 	this->respuesta.mtype = RESPUESTA;
 	this->respuesta.id = this->peticionRecibida.id;
-	strcpy ( this->respuesta.texto,textoRta.str().c_str() );
+	//TODO REFACTORIZAR "MENSAJE"
+	strcpy ( this->respuesta.estadoDeTransaccion,textoRta.str().c_str() );
+	textoRta << "[Respuesta a " << this->peticionRecibida.texto << "]";
 
 	return 0;
 }
