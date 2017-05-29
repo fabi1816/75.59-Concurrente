@@ -15,7 +15,9 @@ mensaje Cliente :: enviarPeticion ( const int id,const std::string& texto ) cons
 
 	peticion.mtype = PETICION;
 	peticion.id = id;
-	strcpy ( peticion.texto,texto.c_str() );
+        //Todo  for me : refactoriza resolviendo problema mesaje
+	strcpy ( peticion.estadoDeTransaccion,texto.c_str() );
+	
 
 	this->cola->escribir ( peticion );
 	this->cola->leer ( RESPUESTA,&respuesta );
