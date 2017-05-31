@@ -23,7 +23,6 @@ int Servidor :: procesarPeticion () {
 	this->respuesta.id = this->peticionRecibida.id;
 	//TODO REFACTORIZAR "MENSAJE"
 	strcpy ( this->respuesta.estadoDeTransaccion,textoRta.str().c_str() );
-	textoRta << "[Respuesta a " << this->peticionRecibida.texto << "]";
 
 	return 0;
 }
@@ -40,3 +39,4 @@ mensaje Servidor :: getPeticionRecibida () {
 mensaje Servidor :: getRespuesta () {
 	return this->respuesta;
 }
+

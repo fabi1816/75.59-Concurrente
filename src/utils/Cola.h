@@ -25,6 +25,7 @@ template <class T> Cola<T> :: Cola ( const std::string& archivo,const char letra
 	if ( this->clave == -1 )
 		perror ( "Error en ftok" );
 
+     //Devuelve  el id de la cola
 	this->id = msgget ( this->clave,0777|IPC_CREAT );
 	if ( this->id == -1 )
 		perror ( "Error en msgget" );
@@ -37,12 +38,13 @@ template <class T> int Cola<T> :: destruir () const {
 	int resultado = msgctl ( this->id,IPC_RMID,NULL );
 	return resultado;
 }
-
+//Escribe en la cola con el id  un mesaje y dvuelve 0 si se produjo con exito
 template <class T> int Cola<T> :: escribir ( const T& dato ) const {
 	int resultado = msgsnd ( this->id,static_cast<const void*>(&dato),sizeof(T)-sizeof(long),0 );
 	return resultado;
 }
 
+//Devuelve la cantidad de byte copiados en el buffer sin contar el long inicial
 template <class T> int Cola<T> :: leer ( const int tipo,T* buffer ) const {
 	int resultado = msgrcv ( this->id,static_cast<void *>(buffer),sizeof(T)-sizeof(long),tipo,0 );
 	return resultado;
